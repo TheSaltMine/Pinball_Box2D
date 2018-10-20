@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModulePhysics.h"
 #include "p2Point.h"
+#include "ModuleSceneIntro.h"
 #include "math.h"
 
 #ifdef _DEBUG
@@ -57,10 +58,10 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -95,6 +96,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bo
 	b2FixtureDef fixture;
 	fixture.shape = &box;
 	fixture.density = 25.0f;
+	fixture.filter.groupIndex = -4;
 
 	b->CreateFixture(&fixture);
 
@@ -107,10 +109,10 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bo
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, bool static_body)
 {
 	b2BodyDef body;
-	body.type = b2_staticBody;
+	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -122,6 +124,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	fixture.shape = &box;
 	fixture.density = 1.0f;
 	fixture.isSensor = true;
+
 
 	b->CreateFixture(&fixture);
 
@@ -155,6 +158,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool s
 
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
+	fixture.filter.groupIndex = -4;
 
 	b->CreateFixture(&fixture);
 
@@ -166,6 +170,43 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool s
 	pbody->width = pbody->height = 0;
 
 	return pbody;
+}
+
+PhysBody* ModulePhysics::CreateFlipper(int x, int y, bool flipX)
+{
+	PhysBody* phys_bdy;
+	PhysBody* pivot;
+	b2RevoluteJointDef jointDef;
+	if (!flipX)
+	{
+		pivot = CreateCircle(x, y, 5, true);
+		jointDef.localAnchorB = { PIXEL_TO_METERS(-30),PIXEL_TO_METERS(0) };
+		jointDef.lowerAngle = -0.15 * b2_pi;
+		jointDef.upperAngle = 0.15 * b2_pi;
+	}
+	else
+	{
+		pivot = CreateCircle(x+82, y, 5, true);
+		jointDef.localAnchorB = { PIXEL_TO_METERS(35),PIXEL_TO_METERS(0) };
+		jointDef.lowerAngle = -0.15 * b2_pi;
+		jointDef.upperAngle = 0.15 * b2_pi;
+	}
+	
+	phys_bdy = CreateRectangle(x, y, 82, 20);
+
+	jointDef.bodyA = pivot->body;
+	jointDef.bodyB = phys_bdy->body;
+	jointDef.collideConnected = false;
+	//jointDef.localAnchorA = {0,0};	
+	/*jointDef.enableMotor = true;
+	jointDef.maxMotorTorque = 1000.0f;
+	jointDef.motorSpeed = 10.0f;*/
+
+	jointDef.enableLimit = true;
+
+	world->CreateJoint(&jointDef);
+
+	return phys_bdy;
 }
 
 // 
@@ -285,16 +326,6 @@ update_status ModulePhysics::PostUpdate()
 			mouse_joint = nullptr;
 		}
 	}
-	// If a body was selected we will attach a mouse joint to it
-	// so we can pull it around
-	// TODO 2: If a body was selected, create a mouse joint
-	// using mouse_joint class property
-
-
-	// TODO 3: If the player keeps pressing the mouse button, update
-	// target position and draw a red line between both anchor points
-
-	// TODO 4: If the player releases the mouse button, destroy the joint
 
 	return UPDATE_CONTINUE;
 }

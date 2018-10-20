@@ -1,0 +1,9 @@
+// Pivot 0, 0
+int flipper_test[2] = {
+	12, 10
+};
+
+// Pivot 0.000000, 0.000000
+float flipper_test[2] = {
+	0.146341f, 0.500000f
+};

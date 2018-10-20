@@ -22,9 +22,12 @@ public:
 	PhysBody* ball_phys;
 	PhysBody* background_phys;
 	PhysBody* spring_phys;
+	PhysBody* flippers[5];
+
 	b2MouseJoint* mouse_joint;
 
 	SDL_Texture* ball;
 	SDL_Texture* background;
 	SDL_Texture* spring;
+	SDL_Texture* flipper;
 };

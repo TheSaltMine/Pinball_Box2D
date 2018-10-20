@@ -26,6 +26,7 @@ bool ModuleSceneIntro::Start()
 	background = App->textures->Load("pinball/background.png");
 	ball = App->textures->Load("pinball/ball.png");
 	spring = App->textures->Load("pinball/spring.png");
+	flipper = App->textures->Load("pinball/flipper_test.png");
 
 	#include "BackgroundVertex.h"
 	background_phys = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -33,6 +34,10 @@ bool ModuleSceneIntro::Start()
 	ball_phys->body->SetBullet(true);
 	spring_phys = App->physics->CreateRectangle(449, 800, 21, 26);
 
+
+	
+	flippers[0] = App->physics->CreateFlipper(130, 895);
+	flippers[1] = App->physics->CreateFlipper(220, 895, true);
 
 
 	//joints
@@ -75,14 +80,30 @@ update_status ModuleSceneIntro::Update()
 		mouse_joint->SetFrequency(20.0f);
 	}
 
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+	{
+		flippers[1]->body->ApplyTorque(10000.0f, true);
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+	{
+		flippers[0]->body->ApplyTorque(-10000.0f, true);
+	}
+
+
 	//Draw background
 	int x, y;
 	background_phys->GetPosition(x, y);
 	App->renderer->Blit(background, x, y);
+
 	ball_phys->GetPosition(x, y);
 	App->renderer->Blit(ball, x, y, NULL, 1.0F, ball_phys->GetRotation());
 	spring_phys->GetPosition(x, y);
 	App->renderer->Blit(spring, x, y);
+
+	flippers[0]->GetPosition(x, y);
+	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[0]->GetRotation());
+	flippers[1]->GetPosition(x, y);
+	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation());
 
 	return UPDATE_CONTINUE;
 }
