@@ -25,10 +25,24 @@ bool ModuleSceneIntro::Start()
 
 	background = App->textures->Load("pinball/background.png");
 	ball = App->textures->Load("pinball/ball.png");
+	spring = App->textures->Load("pinball/spring.png");
 
 	#include "BackgroundVertex.h"
 	background_phys = App->physics->CreateChain(0, 0, background_vertex, 204, true);
-	ball_phys = App->physics->CreateCircle(50, 200, 8);
+	ball_phys = App->physics->CreateCircle(449, 625, 8);
+	ball_phys->body->SetBullet(true);
+	spring_phys = App->physics->CreateRectangle(449, 800, 21, 26);
+
+
+
+	//joints
+	b2MouseJointDef def;
+	def.bodyA = App->physics->ground;
+	def.bodyB = spring_phys->body;
+	def.target = { PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) };
+	def.dampingRatio = 3.0f;
+	def.maxForce = 1000.0f * spring_phys->body->GetMass();
+	mouse_joint = (b2MouseJoint*)App->physics->world->CreateJoint(&def);
 
 	return ret;
 }
@@ -50,6 +64,16 @@ update_status ModuleSceneIntro::Update()
 		circles.getLast()->data->listener = this;
 	}*/
 
+	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+	{
+		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(900) });
+		mouse_joint->SetFrequency(1.0f);
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+	{
+		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) });
+		mouse_joint->SetFrequency(20.0f);
+	}
 
 	//Draw background
 	int x, y;
@@ -57,6 +81,8 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(background, x, y);
 	ball_phys->GetPosition(x, y);
 	App->renderer->Blit(ball, x, y, NULL, 1.0F, ball_phys->GetRotation());
+	spring_phys->GetPosition(x, y);
+	App->renderer->Blit(spring, x, y);
 
 	return UPDATE_CONTINUE;
 }

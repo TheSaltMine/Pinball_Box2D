@@ -70,6 +70,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
+	fixture.restitution = 0.2f;
 
 	b->CreateFixture(&fixture);
 
@@ -81,10 +82,10 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool static_body)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -93,7 +94,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = 1.0f;
+	fixture.density = 25.0f;
 
 	b->CreateFixture(&fixture);
 
@@ -178,8 +179,7 @@ update_status ModulePhysics::PostUpdate()
 
 
 	b2Body* selected_body = nullptr;
-	// Bonus code: this will iterate all objects in the world and draw the circles
-	// You need to provide your own macro to translate meters to pixels
+
 	for(b2Body* b = world->GetBodyList(); b; b = b->GetNext())
 	{
 		for(b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
@@ -261,9 +261,6 @@ update_status ModulePhysics::PostUpdate()
 					fixture = fixture->GetNext();
 				}
 			}
-			// TODO 1: If mouse button 1 is pressed ...
-			// App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN
-			// test if the current body contains mouse position
 		}
 	}
 
