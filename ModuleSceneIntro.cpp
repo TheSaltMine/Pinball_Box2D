@@ -7,6 +7,7 @@
 #include "ModulePhysics.h"
 #include "StoneBlock.h"
 #include "Fruit.h"
+#include "Bumper.h"
 #include "ModuleSceneIntro.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -32,6 +33,7 @@ bool ModuleSceneIntro::Start()
 	stone_block = App->textures->Load("pinball/stone_block.png");
 	background_image = App->textures->Load("pinball/background_image.png");
 	fruit = App->textures->Load("pinball/fruits.png");
+	bumper = App->textures->Load("pinball/bumper.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -64,8 +66,7 @@ bool ModuleSceneIntro::Start()
 
 	AddStoneBlocks();
 	AddFruits();
-
-
+	AddBumpers();
 
 	//joints
 	b2MouseJointDef def;
@@ -135,6 +136,9 @@ update_status ModuleSceneIntro::Update()
 			case FRUIT:
 				App->renderer->Blit(fruit, x, y, interactable->data->GetSprite());
 			break;
+			case BUMPER:
+				App->renderer->Blit(bumper, x, y, interactable->data->GetSprite());
+			break;
 		}
 		interactable = interactable->next;
 	}
@@ -145,7 +149,6 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation(), true);
 
 	//Draw background
-
 	for (int i = 0; i < 18; i++)
 	{
 		background_phys[i]->GetPosition(x, y);
@@ -284,3 +287,36 @@ void ModuleSceneIntro::AddFruits()
 
 }
 
+void ModuleSceneIntro::AddBumpers()
+{
+	PhysBody* body;
+	body = App->physics->CreateCircle(300, 520, 21, true);
+	body->type = BUMPER;
+	Bumper* bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+
+	body = App->physics->CreateCircle(235, 600, 21, true);
+	body->type = BUMPER;
+	bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+
+	body = App->physics->CreateCircle(200, 520, 21, true);
+	body->type = BUMPER;
+	bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+
+	body = App->physics->CreateCircle(210, 330, 21, true);
+	body->type = BUMPER;
+	bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+
+	body = App->physics->CreateCircle(400, 150, 21, true);
+	body->type = BUMPER;
+	bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+}

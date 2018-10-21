@@ -74,6 +74,9 @@
     <ClInclude Include="Fruit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Bumper.h">
+      <Filter>Header Files\Interactables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -113,6 +116,9 @@
       <Filter>Source Files\Interactables</Filter>
     </ClCompile>
     <ClCompile Include="Fruit.cpp">
+      <Filter>Source Files\Interactables</Filter>
+    </ClCompile>
+    <ClCompile Include="Bumper.cpp">
       <Filter>Source Files\Interactables</Filter>
     </ClCompile>
   </ItemGroup>

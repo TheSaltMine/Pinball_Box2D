@@ -8,8 +8,6 @@
 class PhysBody;
 class b2MouseJoint;
 
-
-
 class ModuleSceneIntro : public Module
 {
 public:
@@ -22,6 +20,7 @@ public:
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 	void AddStoneBlocks();
 	void AddFruits();
+	void AddBumpers();
 
 public:
 	PhysBody* ball_phys;
@@ -30,6 +29,7 @@ public:
 	PhysBody* flippers[5];
 
 	p2List<Interactable*> interactables;
+	//Bumper bumpers[5];
 
 	b2MouseJoint* mouse_joint;
 
@@ -40,4 +40,6 @@ public:
 	SDL_Texture* stone_block;
 	SDL_Texture* background_image;
 	SDL_Texture* fruit;
+	SDL_Texture* bumper;
+
 };
