@@ -26,6 +26,35 @@ struct StoneBlock
 	
 };
 
+struct Bumper
+{
+	SDL_Rect sprites[2];
+	SDL_Rect* current_sprite = nullptr;
+	PhysBody* phys = nullptr;
+	bool active = false;
+	int time = 0;
+
+	Bumper();
+	SDL_Rect* GetSprite()
+	{
+		if (!active)
+		{
+			return current_sprite;
+		}else if(time > 20 && active)
+		{
+			time = 0;
+			active = false;
+			return current_sprite = &sprites[0];
+		}
+		else
+		{
+			time++;
+			return current_sprite;
+		}
+	}
+	void Hit();
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -43,7 +72,7 @@ public:
 	PhysBody* spring_phys;
 	PhysBody* flippers[5];
 	StoneBlock stone_blocks[10];
-	PhysBody* bumpers[5];
+	Bumper bumpers[5];
 
 	b2MouseJoint* mouse_joint;
 
@@ -54,5 +83,4 @@ public:
 	SDL_Texture* stone_block;
 	SDL_Texture* background_image;
 	SDL_Texture* bumper;
-	SDL_Texture* bumper_light;
 };

@@ -30,7 +30,6 @@ bool ModuleSceneIntro::Start()
 	stone_block = App->textures->Load("pinball/stone_block.png");
 	background_image = App->textures->Load("pinball/background_image.png");
 	bumper = App->textures->Load("pinball/bumper.png");
-	bumper_light = App->textures->Load("pinball/bumper_light.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -81,7 +80,16 @@ bool ModuleSceneIntro::Start()
 	stone_blocks[9].phys = App->physics->CreateRectangle(901, 569, 80, 21, true);
 	stone_blocks[9].phys->type = STONE_BLOCK;
 
-	bumpers[0] = App->physics->CreateCircle(250, 530, 21, true, this);
+	bumpers[0].phys = App->physics->CreateCircle(300, 520, 21, true);
+	bumpers[0].phys->type = BUMPER;
+	bumpers[1].phys = App->physics->CreateCircle(235, 600, 21, true);
+	bumpers[1].phys->type = BUMPER;
+	bumpers[2].phys = App->physics->CreateCircle(200, 520, 21, true);
+	bumpers[2].phys->type = BUMPER;
+	bumpers[3].phys = App->physics->CreateCircle(210, 330, 21, true);
+	bumpers[3].phys->type = BUMPER;
+	bumpers[4].phys = App->physics->CreateCircle(400, 150, 21, true);
+	bumpers[4].phys->type = BUMPER;
 
 	//joints
 	b2MouseJointDef def;
@@ -147,9 +155,11 @@ update_status ModuleSceneIntro::Update()
 	flippers[1]->GetPosition(x, y);
 	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation(), true);
 
-	bumpers[0]->GetPosition(x, y);
-	App->renderer->Blit(bumper, x, y);
-
+	for (int i = 0; i < 5; i++)
+	{
+		bumpers[i].phys->GetPosition(x, y);
+		App->renderer->Blit(bumper, x, y, bumpers[i].GetSprite());
+	}
 	//Draw background
 
 	for (int i = 0; i < 18; i++)
@@ -178,6 +188,18 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			}
 		}
 	}
+
+	if (bodyB->type == BUMPER)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			if (bumpers[i].phys == bodyB) {
+				bumpers[i].Hit();
+				break;
+			}
+		}
+	}
+
 }
 
 
@@ -206,4 +228,17 @@ StoneBlock::StoneBlock()
 	sprites[2] = { 0,40,80,21 };
 	sprites[3] = { 0,61,80,21 };
 	current_sprite = &sprites[hits];
+}
+
+void Bumper::Hit()
+{
+	active = true;
+	current_sprite = &sprites[1];
+}
+
+Bumper::Bumper()
+{
+	sprites[0] = { 0,0,41,41 };
+	sprites[1] = { 41,0,41,41 };
+	current_sprite = &sprites[0];
 }
