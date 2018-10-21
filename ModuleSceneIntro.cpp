@@ -67,10 +67,64 @@ bool ModuleSceneIntro::Start()
 	flippers[1] = App->physics->CreateFlipper(220, 895, true);
 
 
-	AddStoneBlocks();
+
+	/*AddStoneBlocks();
 	AddFruits();
-	AddBumpers();
+	AddBumpers();*/
 	AddBigbumpers();
+
+	//create stoneblocks
+	CreateStoneBlock(40, 505, 80, 21);
+	CreateStoneBlock(100, 525, 80, 21);
+	CreateStoneBlock(40, 525, 80, 21);
+	CreateStoneBlock(362, 610, 80, 21);
+	CreateStoneBlock(297, 245, 80, 21);
+	CreateStoneBlock(218, 245, 80, 21);
+	CreateStoneBlock(138, 245, 80, 21);
+	CreateStoneBlock(915, 181, 80, 21);
+	CreateStoneBlock(861, 548, 80, 21);
+	CreateStoneBlock(901, 569, 80, 21);
+	//create fruits
+	CreateFruit(216, 700, 22, 18);//bottom left
+	CreateFruit(256, 718, 22, 18);
+	CreateFruit(178, 718, 22, 18);
+	CreateFruit(134, 740, 22, 18);
+	CreateFruit(300, 740, 22, 18);
+	CreateFruit(72, 390, 22, 18);//top left
+	CreateFruit(72, 354, 22, 18);
+	CreateFruit(72, 313, 22, 18);
+	CreateFruit(72, 276, 22, 18);
+	CreateFruit(72, 239, 22, 18);
+	CreateFruit(72, 203, 22, 18);
+	CreateFruit(390, 230, 22, 18);//top left next to wheel
+	CreateFruit(428, 230, 22, 18);
+	CreateFruit(468, 230, 22, 18);
+	CreateFruit(872, 478, 22, 18);//mid right
+	CreateFruit(872, 432, 22, 18);
+	CreateFruit(872, 386, 22, 18);
+	CreateFruit(872, 340, 22, 18);
+	CreateFruit(872, 294, 22, 18);
+	CreateFruit(770, 30, 22, 18); //top right
+	CreateFruit(832, 47, 22, 18);
+	CreateFruit(868, 80, 22, 18);
+	CreateFruit(888, 147, 22, 18);
+	CreateFruit(686, 700, 22, 18);//bottom right
+	CreateFruit(726, 718, 22, 18);
+	CreateFruit(648, 718, 22, 18);
+	CreateFruit(604, 740, 22, 18);
+	CreateFruit(770, 740, 22, 18);
+	//Create Bumpers
+	CreateBumper(300, 520, 21);
+	CreateBumper(235, 600, 21);
+	CreateBumper(200, 520, 21);
+	CreateBumper(210, 330, 21);
+	CreateBumper(300, 520, 21);
+	CreateBumper(300, 520, 21);
+	CreateBumper(400, 150, 21);
+	CreateBumper(770, 170, 21);
+	CreateBumper(590, 470, 21);
+	CreateBumper(750, 350, 21);
+
 
 	//joints
 	b2MouseJointDef def;
@@ -195,169 +249,41 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* 
 	}
 }
 
-void ModuleSceneIntro::AddStoneBlocks()
+void ModuleSceneIntro::CreateStoneBlock(int x, int y, int w, int h)
 {
 	PhysBody* body;
-
-	body = App->physics->CreateRectangle(40, 505, 80, 21, true);
+	body = App->physics->CreateRectangle(x, y, w, h, b2_staticBody);
 	body->type = STONE_BLOCK;
 	StoneBlock* block = new StoneBlock();
 	block->phys = body;
 	interactables.add(block);
-
-	body = App->physics->CreateRectangle(100, 525, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(40, 525, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(362, 610, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(297, 245, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(218, 245, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(138, 245, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(915, 181, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(861, 548, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
-	body = App->physics->CreateRectangle(901, 569, 80, 21, true);
-	body->type = STONE_BLOCK;
-	block = new StoneBlock();
-	block->phys = body;
-	interactables.add(block);
-
 }
 
-void ModuleSceneIntro::AddFruits()
+void ModuleSceneIntro::CreateFruit(int x, int y, int w, int h)
 {
 	PhysBody* body;
-	body = App->physics->CreateRectangleSensor(200, 700, 22, 18, true);
+	body = App->physics->CreateRectangleSensor(x, y, w, h, b2_kinematicBody);
 	body->type = FRUIT;
 	Fruit* fruit = new Fruit();
 	fruit->phys = body;
 	interactables.add(fruit);
-
-	body = App->physics->CreateRectangleSensor(100, 525, 22, 18, true);
-	body->type = FRUIT;
-	fruit = new Fruit();
-	fruit->phys = body;
-	interactables.add(fruit);
-
-	body = App->physics->CreateRectangleSensor(40, 525, 22, 18, true);
-	body->type = FRUIT;
-	fruit = new Fruit();
-	fruit->phys = body;
-	interactables.add(fruit);
-
-	body = App->physics->CreateRectangleSensor(362, 610, 22, 18, true);
-	body->type = FRUIT;
-	fruit = new Fruit();
-	fruit->phys = body;
-	interactables.add(fruit);
-
-	body = App->physics->CreateRectangleSensor(297, 245, 22, 18, true);
-	body->type = FRUIT;
-	fruit = new Fruit();
-	fruit->phys = body;
-	interactables.add(fruit);
-
-	body = App->physics->CreateRectangleSensor(218, 245, 22, 18, true);
-	body->type = FRUIT;
-	fruit = new Fruit();
-	fruit->phys = body;
-	interactables.add(fruit);
-
 }
 
-void ModuleSceneIntro::AddBumpers()
+void ModuleSceneIntro::CreateBumper(int x, int y, int radius)
 {
 	PhysBody* body;
-	body = App->physics->CreateCircle(300, 520, 21, true);
+	body = App->physics->CreateCircle(x, y, radius, true);
 	body->type = BUMPER;
 	Bumper* bumper = new Bumper();
 	bumper->phys = body;
 	interactables.add(bumper);
 
-	body = App->physics->CreateCircle(235, 600, 21, true);
-	body->type = BUMPER;
-	bumper = new Bumper();
-	bumper->phys = body;
-	interactables.add(bumper);
-
-	body = App->physics->CreateCircle(200, 520, 21, true);
-	body->type = BUMPER;
-	bumper = new Bumper();
-	bumper->phys = body;
-	interactables.add(bumper);
-
-	body = App->physics->CreateCircle(210, 330, 21, true);
-	body->type = BUMPER;
-	bumper = new Bumper();
-	bumper->phys = body;
-	interactables.add(bumper);
-
-	body = App->physics->CreateCircle(400, 170, 21, true);
-	body->type = BUMPER;
-	bumper = new Bumper();
-	bumper->phys = body;
-	interactables.add(bumper);
-
-	body = App->physics->CreateCircle(770, 170, 21, true);
-	body->type = BUMPER;
-	bumper = new Bumper();
-	bumper->phys = body;
-	interactables.add(bumper);
-
-	body = App->physics->CreateCircle(590, 470, 21, true);
-	body->type = BUMPER;
-	bumper = new Bumper();
-	bumper->phys = body;
-	interactables.add(bumper);
-
-	body = App->physics->CreateCircle(750, 350, 21, true);
-	body->type = BUMPER;
-	bumper = new Bumper();
-	bumper->phys = body;
-	interactables.add(bumper);
 }
 
 void ModuleSceneIntro::AddBigbumpers()
 {
 	PhysBody* body;
-	body = App->physics->CreateRectangle(100, 770, 41, 123, true);
+	body = App->physics->CreateRectangle(100, 770, 41, 123, b2_staticBody);
 	body->type = BIGBUMPER;
 	BigBumper* bigbumper = new BigBumper();
 	bigbumper->phys = body;

@@ -17,11 +17,15 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
+
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact);
-	void AddStoneBlocks();
-	void AddFruits();
-	void AddBumpers();
+	
 	void AddBigbumpers();
+
+	void CreateStoneBlock(int x, int y, int w, int h);
+	void CreateFruit(int x, int y, int w, int h);
+	void CreateBumper(int x, int y, int radius);
+
 
 public:
 	PhysBody* ball_phys;
@@ -30,7 +34,6 @@ public:
 	PhysBody* flippers[5];
 
 	p2List<Interactable*> interactables;
-	//Bumper bumpers[5];
 
 	b2MouseJoint* mouse_joint;
 
