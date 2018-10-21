@@ -1,11 +1,13 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleRender.h"
-#include "ModuleSceneIntro.h"
 #include "ModuleInput.h"
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "StoneBlock.h"
+#include "Fruit.h"
+#include "ModuleSceneIntro.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -29,6 +31,7 @@ bool ModuleSceneIntro::Start()
 	flipper = App->textures->Load("pinball/flipper_test.png");
 	stone_block = App->textures->Load("pinball/stone_block.png");
 	background_image = App->textures->Load("pinball/background_image.png");
+	fruit = App->textures->Load("pinball/fruits.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -58,26 +61,10 @@ bool ModuleSceneIntro::Start()
 	flippers[0] = App->physics->CreateFlipper(129, 894);
 	flippers[1] = App->physics->CreateFlipper(220, 895, true);
 
-	stone_blocks[0].phys = App->physics->CreateRectangle(40, 505, 80, 21, true);
-	stone_blocks[0].phys->type = STONE_BLOCK;
-	stone_blocks[1].phys = App->physics->CreateRectangle(100, 525, 80, 21, true);
-	stone_blocks[1].phys->type = STONE_BLOCK;
-	stone_blocks[2].phys = App->physics->CreateRectangle(40, 525, 80, 21, true);
-	stone_blocks[2].phys->type = STONE_BLOCK;
-	stone_blocks[3].phys = App->physics->CreateRectangle(362, 610, 80, 21, true);
-	stone_blocks[3].phys->type = STONE_BLOCK;
-	stone_blocks[4].phys = App->physics->CreateRectangle(297, 245, 80, 21, true);
-	stone_blocks[4].phys->type = STONE_BLOCK;
-	stone_blocks[5].phys = App->physics->CreateRectangle(218, 245, 80, 21, true);
-	stone_blocks[5].phys->type = STONE_BLOCK;
-	stone_blocks[6].phys = App->physics->CreateRectangle(138, 245, 80, 21, true);
-	stone_blocks[6].phys->type = STONE_BLOCK;
-	stone_blocks[7].phys = App->physics->CreateRectangle(915, 181, 80, 21, true);
-	stone_blocks[7].phys->type = STONE_BLOCK;
-	stone_blocks[8].phys = App->physics->CreateRectangle(861, 548, 80, 21, true);
-	stone_blocks[8].phys->type = STONE_BLOCK;
-	stone_blocks[9].phys = App->physics->CreateRectangle(901, 569, 80, 21, true);
-	stone_blocks[9].phys->type = STONE_BLOCK;
+
+	AddStoneBlocks();
+	AddFruits();
+
 
 
 	//joints
@@ -103,12 +90,15 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	//deactivate or activate stone_blocks
-	for (int i = 0; i < 10; i++)
+	//deactivate or activate interactables
+	p2List_item<Interactable*>* interactable = interactables.start;
+	while (interactable != NULL)
 	{
-		if (!stone_blocks[i].active && stone_blocks[i].phys->body->IsActive()) stone_blocks[i].phys->body->SetActive(false);
-		else if (stone_blocks[i].active && !stone_blocks[i].phys->body->IsActive()) stone_blocks[i].phys->body->SetActive(true);
+		if (!interactable->data->active && interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(false);
+		else if (interactable->data->active && !interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(true);
+		interactable = interactable->next;
 	}
+
 
 	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 	{
@@ -133,10 +123,20 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(background_image, 0, 0);
 	int x, y;
 
-	for (int i = 0; i < 10; i++)
+	interactable = interactables.start;
+	while (interactable != NULL)
 	{
-		stone_blocks[i].phys->GetPosition(x, y);
-		App->renderer->Blit(stone_block, x, y, stone_blocks[i].current_sprite);
+		interactable->data->phys->GetPosition(x, y);
+		switch (interactable->data->phys->type)
+		{
+			case STONE_BLOCK:
+			App->renderer->Blit(stone_block, x, y, interactable->data->GetSprite());
+			break;
+			case FRUIT:
+				App->renderer->Blit(fruit, x, y, interactable->data->GetSprite());
+			break;
+		}
+		interactable = interactable->next;
 	}
 
 	flippers[0]->GetPosition(x, y);
@@ -162,42 +162,125 @@ update_status ModuleSceneIntro::Update()
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	if (bodyB->type == STONE_BLOCK)
+	if (bodyB->type != BACKGROUND)
 	{
-		for (int i = 0; i < 10; i++)
+		p2List_item<Interactable*>* interactable = interactables.start;
+		while (interactable != NULL)
 		{
-			if (stone_blocks[i].phys == bodyB) {
-				stone_blocks[i].Hit();
+			if (interactable->data->phys == bodyB) 
+			{
+				interactable->data->Hit();
 				break;
 			}
+			interactable = interactable->next;
 		}
 	}
 }
 
-
-void StoneBlock::Hit()
+void ModuleSceneIntro::AddStoneBlocks()
 {
-	hits++;
-	if (hits > 2)
-	{
-		hits = 3;
-		active = false;
-	}
-	current_sprite = &sprites[hits];
+	PhysBody* body;
+
+	body = App->physics->CreateRectangle(40, 505, 80, 21, true);
+	body->type = STONE_BLOCK;
+	StoneBlock* block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(100, 525, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(40, 525, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(362, 610, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(297, 245, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(218, 245, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(138, 245, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(915, 181, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(861, 548, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
+	body = App->physics->CreateRectangle(901, 569, 80, 21, true);
+	body->type = STONE_BLOCK;
+	block = new StoneBlock();
+	block->phys = body;
+	interactables.add(block);
+
 }
 
-void StoneBlock::Restart()
+void ModuleSceneIntro::AddFruits()
 {
-	active = true;
-	hits = 0;
-	current_sprite = &sprites[hits];
+	PhysBody* body;
+	body = App->physics->CreateRectangleSensor(200, 700, 22, 18, true);
+	body->type = FRUIT;
+	Fruit* fruit = new Fruit();
+	fruit->phys = body;
+	interactables.add(fruit);
+
+	body = App->physics->CreateRectangleSensor(100, 525, 22, 18, true);
+	body->type = FRUIT;
+	fruit = new Fruit();
+	fruit->phys = body;
+	interactables.add(fruit);
+
+	body = App->physics->CreateRectangleSensor(40, 525, 22, 18, true);
+	body->type = FRUIT;
+	fruit = new Fruit();
+	fruit->phys = body;
+	interactables.add(fruit);
+
+	body = App->physics->CreateRectangleSensor(362, 610, 22, 18, true);
+	body->type = FRUIT;
+	fruit = new Fruit();
+	fruit->phys = body;
+	interactables.add(fruit);
+
+	body = App->physics->CreateRectangleSensor(297, 245, 22, 18, true);
+	body->type = FRUIT;
+	fruit = new Fruit();
+	fruit->phys = body;
+	interactables.add(fruit);
+
+	body = App->physics->CreateRectangleSensor(218, 245, 22, 18, true);
+	body->type = FRUIT;
+	fruit = new Fruit();
+	fruit->phys = body;
+	interactables.add(fruit);
+
 }
 
-StoneBlock::StoneBlock()
-{
-	sprites[0] = { 0,0,80,21 };
-	sprites[1] = { 0,20,80,21 };
-	sprites[2] = { 0,40,80,21 };
-	sprites[3] = { 0,61,80,21 };
-	current_sprite = &sprites[hits];
-}

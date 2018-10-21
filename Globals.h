@@ -20,6 +20,16 @@ enum update_status
 	UPDATE_ERROR
 };
 
+// Deletes a buffer
+#define RELEASE( x ) \
+    {                        \
+    if( x != NULL )        \
+	    {                      \
+      delete x;            \
+	  x = NULL;              \
+	    }                      \
+    }
+
 // Configuration -----------
 #define SCREEN_WIDTH 1040
 #define SCREEN_HEIGHT 960

@@ -59,7 +59,7 @@ bool ModuleAudio::CleanUp()
 
 	p2List_item<Mix_Chunk*>* item;
 
-	for(item = fx.getFirst(); item != NULL; item = item->next)
+	for(item = fx.start; item != NULL; item = item->next)
 	{
 		Mix_FreeChunk(item->data);
 	}
@@ -158,7 +158,7 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 
 	Mix_Chunk* chunk = NULL;
 	
-	if(fx.at(id-1, chunk) == true)
+	if(fx.At(id-1))
 	{
 		Mix_PlayChannel(-1, chunk, repeat);
 		ret = true;

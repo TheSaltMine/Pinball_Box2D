@@ -43,7 +43,7 @@ Application::Application()
 
 Application::~Application()
 {
-	p2List_item<Module*>* item = list_modules.getLast();
+	p2List_item<Module*>* item = list_modules.end;
 
 	while(item != NULL)
 	{
@@ -57,7 +57,7 @@ bool Application::Init()
 	bool ret = true;
 
 	// Call Init() in all modules
-	p2List_item<Module*>* item = list_modules.getFirst();
+	p2List_item<Module*>* item = list_modules.start;
 
 	while(item != NULL && ret == true)
 	{
@@ -67,7 +67,7 @@ bool Application::Init()
 
 	// After all Init calls we call Start() in all modules
 	LOG("Application Start --------------");
-	item = list_modules.getFirst();
+	item = list_modules.start;
 
 	while(item != NULL && ret == true)
 	{
@@ -83,7 +83,7 @@ bool Application::Init()
 update_status Application::Update()
 {
 	update_status ret = UPDATE_CONTINUE;
-	p2List_item<Module*>* item = list_modules.getFirst();
+	p2List_item<Module*>* item = list_modules.start;
 
 	while(item != NULL && ret == UPDATE_CONTINUE)
 	{
@@ -92,7 +92,7 @@ update_status Application::Update()
 		item = item->next;
 	}
 
-	item = list_modules.getFirst();
+	item = list_modules.start;
 
 	while(item != NULL && ret == UPDATE_CONTINUE)
 	{
@@ -101,7 +101,7 @@ update_status Application::Update()
 		item = item->next;
 	}
 
-	item = list_modules.getFirst();
+	item = list_modules.start;
 
 	while(item != NULL && ret == UPDATE_CONTINUE)
 	{
@@ -116,7 +116,7 @@ update_status Application::Update()
 bool Application::CleanUp()
 {
 	bool ret = true;
-	p2List_item<Module*>* item = list_modules.getLast();
+	p2List_item<Module*>* item = list_modules.start;
 
 	while(item != NULL && ret == true)
 	{

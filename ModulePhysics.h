@@ -20,7 +20,8 @@ enum ColliderType
 	BACKGROUND,
 	FLIPPER,
 	STONE_BLOCK,
-	BUMPER
+	BUMPER,
+	FRUIT
 };
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody

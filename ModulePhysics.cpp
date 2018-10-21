@@ -131,8 +131,8 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
 	b->SetUserData(pbody);
-	pbody->width = width;
-	pbody->height = height;
+	pbody->width = width * 0.5f;
+	pbody->height = height * 0.5f;
 
 	return pbody;
 }

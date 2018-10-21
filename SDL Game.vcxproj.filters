@@ -12,6 +12,12 @@
     <Filter Include="Header Files\Containers">
       <UniqueIdentifier>{97c4111e-b102-4ba8-9053-6f07ccbbe3d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Interactables">
+      <UniqueIdentifier>{6a3232e3-9efc-42f5-9cf1-1656f5cf6e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interactables">
+      <UniqueIdentifier>{d42d8643-67d8-4aae-8fef-37d75fd01509}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -59,6 +65,15 @@
     <ClInclude Include="BackgroundVertex.h">
       <Filter>Header Files\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Interactable.h">
+      <Filter>Header Files\Interactables</Filter>
+    </ClInclude>
+    <ClInclude Include="StoneBlock.h">
+      <Filter>Header Files\Interactables</Filter>
+    </ClInclude>
+    <ClInclude Include="Fruit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -93,6 +108,12 @@
     </ClCompile>
     <ClCompile Include="ModulePhysics.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StoneBlock.cpp">
+      <Filter>Source Files\Interactables</Filter>
+    </ClCompile>
+    <ClCompile Include="Fruit.cpp">
+      <Filter>Source Files\Interactables</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
