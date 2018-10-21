@@ -8,6 +8,7 @@
 #include "StoneBlock.h"
 #include "Fruit.h"
 #include "Bumper.h"
+#include "BigBumper.h"
 #include "ModuleSceneIntro.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -34,6 +35,8 @@ bool ModuleSceneIntro::Start()
 	background_image = App->textures->Load("pinball/background_image.png");
 	fruit = App->textures->Load("pinball/fruits.png");
 	bumper = App->textures->Load("pinball/bumper.png");
+    bigbumper = App->textures->Load("pinball/bigbumper.png");
+
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -67,6 +70,7 @@ bool ModuleSceneIntro::Start()
 	AddStoneBlocks();
 	AddFruits();
 	AddBumpers();
+	AddBigbumpers();
 
 	//joints
 	b2MouseJointDef def;
@@ -139,6 +143,9 @@ update_status ModuleSceneIntro::Update()
 			case BUMPER:
 				App->renderer->Blit(bumper, x, y, interactable->data->GetSprite());
 			break;
+			case BIGBUMPER:
+				App->renderer->Blit(bigbumper, x, y, interactable->data->GetSprite());
+			break;
 		}
 		interactable = interactable->next;
 	}
@@ -163,7 +170,7 @@ update_status ModuleSceneIntro::Update()
 	return UPDATE_CONTINUE;
 }
 
-void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
+void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact)
 {
 	if (bodyB->type != BACKGROUND)
 	{
@@ -177,6 +184,14 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			}
 			interactable = interactable->next;
 		}
+	}
+	if (bodyB->type == BUMPER)
+	{
+		b2WorldManifold worldManifold;
+		contact->GetWorldManifold(&worldManifold);
+
+		float normalLength = 0.1f;
+		bodyA->body->ApplyForce(normalLength*1000 * worldManifold.normal, worldManifold.points[0], false);
 	}
 }
 
@@ -314,9 +329,37 @@ void ModuleSceneIntro::AddBumpers()
 	bumper->phys = body;
 	interactables.add(bumper);
 
-	body = App->physics->CreateCircle(400, 150, 21, true);
+	body = App->physics->CreateCircle(400, 170, 21, true);
 	body->type = BUMPER;
 	bumper = new Bumper();
 	bumper->phys = body;
 	interactables.add(bumper);
+
+	body = App->physics->CreateCircle(770, 170, 21, true);
+	body->type = BUMPER;
+	bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+
+	body = App->physics->CreateCircle(590, 470, 21, true);
+	body->type = BUMPER;
+	bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+
+	body = App->physics->CreateCircle(750, 350, 21, true);
+	body->type = BUMPER;
+	bumper = new Bumper();
+	bumper->phys = body;
+	interactables.add(bumper);
+}
+
+void ModuleSceneIntro::AddBigbumpers()
+{
+	PhysBody* body;
+	body = App->physics->CreateRectangle(100, 770, 41, 123, true);
+	body->type = BIGBUMPER;
+	BigBumper* bigbumper = new BigBumper();
+	bigbumper->phys = body;
+	interactables.add(bigbumper);
 }

@@ -77,6 +77,12 @@
     <ClInclude Include="Bumper.h">
       <Filter>Header Files\Interactables</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BigBumper.h">
+      <Filter>Header Files\Interactables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -121,5 +127,11 @@
     <ClCompile Include="Bumper.cpp">
       <Filter>Source Files\Interactables</Filter>
     </ClCompile>
+    <ClCompile Include="BigBumper.cpp">
+      <Filter>Source Files\Interactables</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="2D Physics - class 4.rc" />
   </ItemGroup>
 </Project>

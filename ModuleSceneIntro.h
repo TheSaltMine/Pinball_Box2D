@@ -17,10 +17,11 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
-	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact);
 	void AddStoneBlocks();
 	void AddFruits();
 	void AddBumpers();
+	void AddBigbumpers();
 
 public:
 	PhysBody* ball_phys;
@@ -41,5 +42,6 @@ public:
 	SDL_Texture* background_image;
 	SDL_Texture* fruit;
 	SDL_Texture* bumper;
+	SDL_Texture* bigbumper;
 
 };
