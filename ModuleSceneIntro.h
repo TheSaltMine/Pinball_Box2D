@@ -7,6 +7,24 @@
 class PhysBody;
 class b2MouseJoint;
 
+struct StoneBlock
+{
+	SDL_Rect sprites[3];
+	SDL_Rect* current_sprite;
+	PhysBody* phys = nullptr;
+	unsigned int hits = 0;
+
+	StoneBlock();
+	SDL_Rect* GetSprite()
+	{
+		current_sprite;
+	}
+
+	void Hit();
+	void Restart();
+	
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -20,9 +38,10 @@ public:
 
 public:
 	PhysBody* ball_phys;
-	PhysBody* background_phys;
+	PhysBody* background_phys[18];
 	PhysBody* spring_phys;
 	PhysBody* flippers[5];
+	StoneBlock stone_blocks[10];
 
 	b2MouseJoint* mouse_joint;
 
@@ -30,4 +49,6 @@ public:
 	SDL_Texture* background;
 	SDL_Texture* spring;
 	SDL_Texture* flipper;
+	SDL_Texture* stone_block;
+	SDL_Texture* background_image;
 };

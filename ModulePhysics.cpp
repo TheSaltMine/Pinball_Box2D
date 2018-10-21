@@ -58,7 +58,7 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body, Module* listener)
 {
 	b2BodyDef body;
 	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -79,11 +79,12 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body
 	pbody->body = b;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = radius;
+	pbody->listener = listener;
 
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool static_body)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool static_body, Module* listener)
 {
 	b2BodyDef body;
 	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -105,11 +106,12 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bo
 	b->SetUserData(pbody);
 	pbody->width = width * 0.5f;
 	pbody->height = height * 0.5f;
+	pbody->listener = listener;
 
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, bool static_body)
+PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, bool static_body, Module* listener)
 {
 	b2BodyDef body;
 	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -133,11 +135,12 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	b->SetUserData(pbody);
 	pbody->width = width;
 	pbody->height = height;
+	pbody->listener = listener;
 
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool static_body)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool static_body, Module* listener)
 {
 	b2BodyDef body;
 	static_body? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -168,6 +171,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool s
 	pbody->body = b;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = 0;
+	pbody->listener = listener;
 
 	return pbody;
 }
@@ -181,26 +185,24 @@ PhysBody* ModulePhysics::CreateFlipper(int x, int y, bool flipX)
 	{
 		pivot = CreateCircle(x, y, 5, true);
 		jointDef.localAnchorB = { PIXEL_TO_METERS(-30),PIXEL_TO_METERS(0) };
-		jointDef.lowerAngle = -0.15 * b2_pi;
-		jointDef.upperAngle = 0.15 * b2_pi;
+		jointDef.motorSpeed = 10.0f;
 	}
 	else
 	{
 		pivot = CreateCircle(x+82, y, 5, true);
 		jointDef.localAnchorB = { PIXEL_TO_METERS(35),PIXEL_TO_METERS(0) };
-		jointDef.lowerAngle = -0.15 * b2_pi;
-		jointDef.upperAngle = 0.15 * b2_pi;
+		jointDef.motorSpeed = -10.0f;
 	}
 	
 	phys_bdy = CreateRectangle(x, y, 82, 20);
-
+	jointDef.lowerAngle = -0.15 * b2_pi;
+	jointDef.upperAngle = 0.15 * b2_pi;
 	jointDef.bodyA = pivot->body;
 	jointDef.bodyB = phys_bdy->body;
 	jointDef.collideConnected = false;
-	//jointDef.localAnchorA = {0,0};	
-	/*jointDef.enableMotor = true;
+	jointDef.enableMotor = true;
 	jointDef.maxMotorTorque = 1000.0f;
-	jointDef.motorSpeed = 10.0f;*/
+
 
 	jointDef.enableLimit = true;
 
