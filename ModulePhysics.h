@@ -22,7 +22,8 @@ enum ColliderType
 	STONE_BLOCK,
 	BUMPER,
 	FRUIT,
-	WHEEL
+	WHEEL,
+	BIGBUMPER
 };
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody

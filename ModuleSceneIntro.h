@@ -17,11 +17,16 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
-	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+
+	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact);
+	
+	void AddBigbumpers();
+
 	void CreateStoneBlock(int x, int y, int w, int h);
 	void CreateFruit(int x, int y, int w, int h);
 	void CreateBumper(int x, int y, int radius);
 	void CreateWheel(int x, int y);
+
 
 public:
 	PhysBody* ball_phys;
@@ -43,4 +48,5 @@ public:
 	SDL_Texture* fruit;
 	SDL_Texture* bumper;
 	SDL_Texture* wheel;
+	SDL_Texture* bigbumper;
 };

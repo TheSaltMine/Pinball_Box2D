@@ -80,6 +80,12 @@
     <ClInclude Include="Wheel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BigBumper.h">
+      <Filter>Header Files\Interactables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -126,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="Wheel.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BigBumper.cpp">
+      <Filter>Source Files\Interactables</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,6 +9,7 @@
 #include "Fruit.h"
 #include "Bumper.h"
 #include "Wheel.h"
+#include "BigBumper.h"
 #include "ModuleSceneIntro.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -36,6 +37,7 @@ bool ModuleSceneIntro::Start()
 	fruit = App->textures->Load("pinball/fruits.png");
 	bumper = App->textures->Load("pinball/bumper.png");
 	wheel = App->textures->Load("pinball/wheel.png");
+    bigbumper = App->textures->Load("pinball/bigbumper.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -64,6 +66,13 @@ bool ModuleSceneIntro::Start()
 	
 	flippers[0] = App->physics->CreateFlipper(129, 894);
 	flippers[1] = App->physics->CreateFlipper(220, 895, true);
+
+
+
+	/*AddStoneBlocks();
+	AddFruits();
+	AddBumpers();*/
+	AddBigbumpers();
 
 	//create stoneblocks
 	CreateStoneBlock(40, 505, 80, 21);
@@ -116,6 +125,10 @@ bool ModuleSceneIntro::Start()
 	//Create wheels
 	CreateWheel(125, 74);
 	CreateWheel(520, 147);
+
+	CreateBumper(770, 170, 21);
+	CreateBumper(590, 470, 21);
+	CreateBumper(750, 350, 21);
 
 	//joints
 	b2MouseJointDef def;
@@ -191,6 +204,9 @@ update_status ModuleSceneIntro::Update()
 			case WHEEL:
 				App->renderer->Blit(wheel, x, y, NULL, 1.0f, interactable->data->phys->GetRotation(), false, false, PIXEL_TO_METERS(76), PIXEL_TO_METERS(76));
 			break;
+			case BIGBUMPER:
+				App->renderer->Blit(bigbumper, x, y, interactable->data->GetSprite());
+			break;
 		}
 		interactable = interactable->next;
 	}
@@ -215,7 +231,7 @@ update_status ModuleSceneIntro::Update()
 	return UPDATE_CONTINUE;
 }
 
-void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
+void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact)
 {
 	if (bodyB->type != BACKGROUND)
 	{
@@ -229,6 +245,14 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			}
 			interactable = interactable->next;
 		}
+	}
+	if (bodyB->type == BUMPER)
+	{
+		b2WorldManifold worldManifold;
+		contact->GetWorldManifold(&worldManifold);
+
+		float normalLength = 0.1f;
+		bodyA->body->ApplyForce(normalLength*1000 * worldManifold.normal, worldManifold.points[0], false);
 	}
 }
 
@@ -260,6 +284,17 @@ void ModuleSceneIntro::CreateBumper(int x, int y, int radius)
 	Bumper* bumper = new Bumper();
 	bumper->phys = body;
 	interactables.add(bumper);
+
+}
+
+void ModuleSceneIntro::AddBigbumpers()
+{
+	PhysBody* body;
+	body = App->physics->CreateRectangle(100, 770, 41, 123, b2_staticBody);
+	body->type = BIGBUMPER;
+	BigBumper* bigbumper = new BigBumper();
+	bigbumper->phys = body;
+	interactables.add(bigbumper);
 }
 
 void ModuleSceneIntro::CreateWheel(int x, int y)
