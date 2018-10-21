@@ -181,18 +181,18 @@ PhysBody* ModulePhysics::CreateFlipper(int x, int y, bool flipX)
 	{
 		pivot = CreateCircle(x, y, 5, true);
 		jointDef.localAnchorB = { PIXEL_TO_METERS(-30),PIXEL_TO_METERS(0) };
-		jointDef.motorSpeed = 10.0f;
+		jointDef.motorSpeed = 20.0f;
 	}
 	else
 	{
 		pivot = CreateCircle(x+82, y, 5, true);
-		jointDef.localAnchorB = { PIXEL_TO_METERS(35),PIXEL_TO_METERS(0) };
-		jointDef.motorSpeed = -10.0f;
+		jointDef.localAnchorB = { PIXEL_TO_METERS(30),PIXEL_TO_METERS(0) };
+		jointDef.motorSpeed = -20.0f;
 	}
 	
 	phys_bdy = CreateRectangle(x, y, 82, 20);
-	jointDef.lowerAngle = -0.15 * b2_pi;
-	jointDef.upperAngle = 0.15 * b2_pi;
+	jointDef.lowerAngle = -0.1 * b2_pi;
+	jointDef.upperAngle = 0.1 * b2_pi;
 	jointDef.bodyA = pivot->body;
 	jointDef.bodyB = phys_bdy->body;
 	jointDef.collideConnected = false;

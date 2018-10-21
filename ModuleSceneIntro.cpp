@@ -55,7 +55,7 @@ bool ModuleSceneIntro::Start()
 	ball_phys->listener = this;
 	spring_phys = App->physics->CreateRectangle(449, 800, 21, 26);
 	
-	flippers[0] = App->physics->CreateFlipper(130, 895);
+	flippers[0] = App->physics->CreateFlipper(129, 894);
 	flippers[1] = App->physics->CreateFlipper(220, 895, true);
 
 	stone_blocks[0].phys = App->physics->CreateRectangle(40, 505, 80, 21, true);
@@ -142,7 +142,7 @@ update_status ModuleSceneIntro::Update()
 	flippers[0]->GetPosition(x, y);
 	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[0]->GetRotation());
 	flippers[1]->GetPosition(x, y);
-	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation());
+	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation(), true);
 
 	//Draw background
 
