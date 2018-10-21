@@ -13,10 +13,13 @@ Wheel::~Wheel()
 {
 }
 
-void Wheel::Hit()
+void Wheel::Hit(b2Contact* contact, PhysBody* bodyA)
 {
-	joint->EnableMotor(true);
-	joint->EnableLimit(false);
+	if (bodyA->type != EXTRA_BALL)
+	{
+		joint->EnableMotor(true);
+		joint->EnableLimit(false);
+	}
 }
 
 void Wheel::Restart()

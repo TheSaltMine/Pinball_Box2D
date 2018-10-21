@@ -1,3 +1,4 @@
+#include "ModulePhysics.h"
 #include "ModuleRender.h"
 #include "BigBumper.h"
 
@@ -26,10 +27,17 @@ SDL_Rect * BigBumper::GetSprite()
 	}
 }
 
-void BigBumper::Hit()
+void BigBumper::Hit(b2Contact* contact, PhysBody* bodyA)
 {
 	hit = true;
 	current_sprite = &sprites[1];
+
+
+	b2WorldManifold worldManifold;
+	contact->GetWorldManifold(&worldManifold);
+
+	float normalLength = 0.1f;
+	bodyA->body->ApplyForce(normalLength * 1000 * worldManifold.normal, worldManifold.points[0], false);
 }
 
 BigBumper::BigBumper()

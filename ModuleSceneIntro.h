@@ -34,6 +34,7 @@ public:
 	PhysBody* spring_phys;
 	PhysBody* flippers[5];
 	PhysBody* wheel_phys;
+	PhysBody* extra_balls[6];
 
 	p2List<Interactable*> interactables;
 
@@ -49,4 +50,5 @@ public:
 	SDL_Texture* bumper;
 	SDL_Texture* wheel;
 	SDL_Texture* bigbumper;
+	SDL_Texture* extra_ball;
 };

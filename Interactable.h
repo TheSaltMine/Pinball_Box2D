@@ -7,7 +7,7 @@ public:
 	Interactable() {};
 	~Interactable() {};
 
-	virtual void Hit() {};
+	virtual void Hit(b2Contact* contact, PhysBody* bodyA) {};
 	virtual void Restart() {};
 	virtual SDL_Rect* GetSprite() { return nullptr; };
 

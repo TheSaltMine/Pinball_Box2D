@@ -38,6 +38,7 @@ bool ModuleSceneIntro::Start()
 	bumper = App->textures->Load("pinball/bumper.png");
 	wheel = App->textures->Load("pinball/wheel.png");
     bigbumper = App->textures->Load("pinball/bigbumper.png");
+	extra_ball = App->textures->Load("pinball/extra_ball.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -67,11 +68,25 @@ bool ModuleSceneIntro::Start()
 	flippers[0] = App->physics->CreateFlipper(129, 894);
 	flippers[1] = App->physics->CreateFlipper(220, 895, true);
 
+	extra_balls[0] = App->physics->CreateCircle(193, 156, 6);
+	extra_balls[0]->listener = this;
+	extra_balls[0]->type = EXTRA_BALL;
+	extra_balls[1] = App->physics->CreateCircle(193, 156, 6);
+	extra_balls[1]->listener = this;
+	extra_balls[1]->type = EXTRA_BALL;
+	extra_balls[2] = App->physics->CreateCircle(193, 156, 6);
+	extra_balls[2]->listener = this;
+	extra_balls[2]->type = EXTRA_BALL;
+	extra_balls[3] = App->physics->CreateCircle(580, 240, 6);
+	extra_balls[3]->listener = this;
+	extra_balls[3]->type = EXTRA_BALL;
+	extra_balls[4] = App->physics->CreateCircle(580, 240, 6);
+	extra_balls[4]->listener = this;
+	extra_balls[4]->type = EXTRA_BALL;
+	extra_balls[5] = App->physics->CreateCircle(580, 240, 6);
+	extra_balls[5]->listener = this;
+	extra_balls[5]->type = EXTRA_BALL;
 
-
-	/*AddStoneBlocks();
-	AddFruits();
-	AddBumpers();*/
 	AddBigbumpers();
 
 	//create stoneblocks
@@ -122,13 +137,13 @@ bool ModuleSceneIntro::Start()
 	CreateBumper(300, 520, 21);
 	CreateBumper(300, 520, 21);
 	CreateBumper(400, 150, 21);
+	CreateBumper(770, 170, 21);
+	CreateBumper(590, 470, 21);
+	CreateBumper(750, 350, 21);
 	//Create wheels
 	CreateWheel(125, 74);
 	CreateWheel(520, 147);
 
-	CreateBumper(770, 170, 21);
-	CreateBumper(590, 470, 21);
-	CreateBumper(750, 350, 21);
 
 	//joints
 	b2MouseJointDef def;
@@ -222,6 +237,11 @@ update_status ModuleSceneIntro::Update()
 		background_phys[i]->GetPosition(x, y);
 		App->renderer->Blit(background, x, y);
 	}
+	for (int i = 0; i < 6; i++)
+	{
+		extra_balls[i]->GetPosition(x, y);
+		App->renderer->Blit(extra_ball, x, y);
+	}
 
 	ball_phys->GetPosition(x, y);
 	App->renderer->Blit(ball, x, y, NULL, 1.0F, ball_phys->GetRotation());
@@ -240,19 +260,11 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* 
 		{
 			if (interactable->data->phys == bodyB) 
 			{
-				interactable->data->Hit();
+				interactable->data->Hit(contact, bodyA);
 				break;
 			}
 			interactable = interactable->next;
 		}
-	}
-	if (bodyB->type == BUMPER)
-	{
-		b2WorldManifold worldManifold;
-		contact->GetWorldManifold(&worldManifold);
-
-		float normalLength = 0.1f;
-		bodyA->body->ApplyForce(normalLength*1000 * worldManifold.normal, worldManifold.points[0], false);
 	}
 }
 

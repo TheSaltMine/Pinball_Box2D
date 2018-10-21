@@ -7,7 +7,7 @@ public:
 	Fruit();
 	~Fruit();
 	void Restart();
-	void Hit();
+	void Hit(b2Contact* contact, PhysBody* bodyA);
 	SDL_Rect* GetSprite();
 	bool collected = false;
 	float timer = 0.0f;

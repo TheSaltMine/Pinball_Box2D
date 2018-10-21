@@ -89,7 +89,6 @@
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="p2DynArray.h" />
     <ClInclude Include="p2Point.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="StoneBlock.h" />
     <ClInclude Include="Wheel.h" />
   </ItemGroup>

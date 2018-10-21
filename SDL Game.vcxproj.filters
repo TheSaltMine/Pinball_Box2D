@@ -71,19 +71,16 @@
     <ClInclude Include="StoneBlock.h">
       <Filter>Header Files\Interactables</Filter>
     </ClInclude>
-    <ClInclude Include="Fruit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Bumper.h">
       <Filter>Header Files\Interactables</Filter>
     </ClInclude>
-    <ClInclude Include="Wheel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BigBumper.h">
+      <Filter>Header Files\Interactables</Filter>
+    </ClInclude>
+    <ClInclude Include="Wheel.h">
+      <Filter>Header Files\Interactables</Filter>
+    </ClInclude>
+    <ClInclude Include="Fruit.h">
       <Filter>Header Files\Interactables</Filter>
     </ClInclude>
   </ItemGroup>
@@ -130,10 +127,10 @@
     <ClCompile Include="Bumper.cpp">
       <Filter>Source Files\Interactables</Filter>
     </ClCompile>
-    <ClCompile Include="Wheel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BigBumper.cpp">
+      <Filter>Source Files\Interactables</Filter>
+    </ClCompile>
+    <ClCompile Include="Wheel.cpp">
       <Filter>Source Files\Interactables</Filter>
     </ClCompile>
   </ItemGroup>

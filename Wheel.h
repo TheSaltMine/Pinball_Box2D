@@ -11,7 +11,7 @@ public:
 	~Wheel();
 
 	b2RevoluteJoint* joint;
-	void Hit();
+	void Hit(b2Contact* contact, PhysBody* bodyA);
 	void Restart();
 };
 

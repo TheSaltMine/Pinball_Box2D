@@ -13,7 +13,7 @@ public:
 		return current_sprite;
 	}
 
-	void Hit();
+	void Hit(b2Contact* contact, PhysBody* bodyA);
 	void Restart();
 
 };

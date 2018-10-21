@@ -10,6 +10,6 @@ public:
 	bool hit = false;
 
 	SDL_Rect* GetSprite();
-	void Hit();
+	void Hit(b2Contact* contact, PhysBody* bodyA);
 };
 

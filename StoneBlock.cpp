@@ -1,4 +1,5 @@
 #include "ModuleRender.h"
+#include "ModulePhysics.h"
 #include "StoneBlock.h"
 
 
@@ -14,7 +15,7 @@ StoneBlock::StoneBlock()
 StoneBlock::~StoneBlock()
 {
 }
-void StoneBlock::Hit()
+void StoneBlock::Hit(b2Contact* contact, PhysBody* bodyA)
 {
 	hits++;
 	if (hits > 2)

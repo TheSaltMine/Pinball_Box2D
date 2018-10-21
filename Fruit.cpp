@@ -28,7 +28,7 @@ void Fruit::Restart()
 	timer = 0.0f;
 }
 
-void Fruit::Hit()
+void Fruit::Hit(b2Contact* contact, PhysBody* bodyA)
 {
 	collected = true;
 	phys->body->SetLinearVelocity({ 0.0f, PIXEL_TO_METERS(-50.0f) });
