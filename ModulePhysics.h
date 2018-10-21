@@ -53,10 +53,10 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius, bool static_body = false, Module* listener = nullptr);
-	PhysBody* CreateRectangle(int x, int y, int width, int height, bool static_body = false, Module* listener = nullptr);
-	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, bool static_body = false, Module* listener = nullptr);
-	PhysBody* CreateChain(int x, int y, int* points, int size, bool static_body = false, Module* listener = nullptr);
+	PhysBody* CreateCircle(int x, int y, int radius, bool static_body = false);
+	PhysBody* CreateRectangle(int x, int y, int width, int height, bool static_body = false);
+	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, bool static_body = false);
+	PhysBody* CreateChain(int x, int y, int* points, int size, bool static_body = false);
 	PhysBody* CreateFlipper(int x, int y, bool flipX = false);
 
 	// b2ContactListener ---

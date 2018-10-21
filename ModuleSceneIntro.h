@@ -9,10 +9,11 @@ class b2MouseJoint;
 
 struct StoneBlock
 {
-	SDL_Rect sprites[3];
+	SDL_Rect sprites[4];
 	SDL_Rect* current_sprite;
 	PhysBody* phys = nullptr;
 	unsigned int hits = 0;
+	bool active = true;
 
 	StoneBlock();
 	SDL_Rect* GetSprite()

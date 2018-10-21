@@ -58,7 +58,7 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body, Module* listener)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body)
 {
 	b2BodyDef body;
 	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -79,12 +79,11 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body
 	pbody->body = b;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = radius;
-	pbody->listener = listener;
 
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool static_body, Module* listener)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool static_body)
 {
 	b2BodyDef body;
 	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -106,12 +105,11 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bo
 	b->SetUserData(pbody);
 	pbody->width = width * 0.5f;
 	pbody->height = height * 0.5f;
-	pbody->listener = listener;
 
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, bool static_body, Module* listener)
+PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, bool static_body)
 {
 	b2BodyDef body;
 	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -135,12 +133,11 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	b->SetUserData(pbody);
 	pbody->width = width;
 	pbody->height = height;
-	pbody->listener = listener;
 
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool static_body, Module* listener)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool static_body)
 {
 	b2BodyDef body;
 	static_body? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -171,7 +168,6 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool s
 	pbody->body = b;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = 0;
-	pbody->listener = listener;
 
 	return pbody;
 }
