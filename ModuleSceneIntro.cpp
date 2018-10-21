@@ -71,7 +71,7 @@ bool ModuleSceneIntro::Start()
 	/*AddStoneBlocks();
 	AddFruits();
 	AddBumpers();*/
-	AddBigbumpers();
+	CreateBigbumpers(70, 720, 41, 123);
 
 	//create stoneblocks
 	CreateStoneBlock(40, 505, 80, 21);
@@ -239,13 +239,13 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* 
 			interactable = interactable->next;
 		}
 	}
-	if (bodyB->type == BUMPER)
+	if (bodyB->type == BUMPER || bodyB->type == BIGBUMPER)
 	{
 		b2WorldManifold worldManifold;
 		contact->GetWorldManifold(&worldManifold);
 
 		float normalLength = 0.1f;
-		bodyA->body->ApplyForce(normalLength*1000 * worldManifold.normal, worldManifold.points[0], false);
+		bodyA->body->ApplyForce(normalLength * 1000 * worldManifold.normal, worldManifold.points[0], false);
 	}
 }
 
@@ -280,10 +280,18 @@ void ModuleSceneIntro::CreateBumper(int x, int y, int radius)
 
 }
 
-void ModuleSceneIntro::AddBigbumpers()
+void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h)
 {
 	PhysBody* body;
-	body = App->physics->CreateRectangle(100, 770, 41, 123, b2_staticBody);
+	int bigbumpercoord[10] = {
+		9, 1,
+		41, 101,
+		22, 121,
+		1, 102,
+		2, 0
+	};
+	body = App->physics->CreateChain(x,y, bigbumpercoord, 10, true);
+	//body = App->physics->CreateRectangle(x, y, w, h, b2_staticBody);
 	body->type = BIGBUMPER;
 	BigBumper* bigbumper = new BigBumper();
 	bigbumper->phys = body;

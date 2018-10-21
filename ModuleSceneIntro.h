@@ -20,7 +20,7 @@ public:
 
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact);
 	
-	void AddBigbumpers();
+	void CreateBigbumpers(int x, int y, int w, int h);
 
 	void CreateStoneBlock(int x, int y, int w, int h);
 	void CreateFruit(int x, int y, int w, int h);
