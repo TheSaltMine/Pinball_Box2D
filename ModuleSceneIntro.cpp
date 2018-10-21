@@ -87,7 +87,8 @@ bool ModuleSceneIntro::Start()
 	extra_balls[5]->listener = this;
 	extra_balls[5]->type = EXTRA_BALL;
 
-	AddBigbumpers();
+
+	CreateBigbumpers(70, 720, 41, 123);
 
 	//create stoneblocks
 	CreateStoneBlock(40, 505, 80, 21);
@@ -299,10 +300,18 @@ void ModuleSceneIntro::CreateBumper(int x, int y, int radius)
 
 }
 
-void ModuleSceneIntro::AddBigbumpers()
+void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h)
 {
 	PhysBody* body;
-	body = App->physics->CreateRectangle(100, 770, 41, 123, b2_staticBody);
+	int bigbumpercoord[10] = {
+		9, 1,
+		41, 101,
+		22, 121,
+		1, 102,
+		2, 0
+	};
+	body = App->physics->CreateChain(x,y, bigbumpercoord, 10, true);
+	//body = App->physics->CreateRectangle(x, y, w, h, b2_staticBody);
 	body->type = BIGBUMPER;
 	BigBumper* bigbumper = new BigBumper();
 	bigbumper->phys = body;
