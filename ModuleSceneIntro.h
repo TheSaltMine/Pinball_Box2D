@@ -42,6 +42,7 @@ public:
 	PhysBody* spring_phys;
 	PhysBody* flippers[5];
 	StoneBlock stone_blocks[10];
+	PhysBody* bumpers[5];
 
 	b2MouseJoint* mouse_joint;
 
@@ -51,4 +52,6 @@ public:
 	SDL_Texture* flipper;
 	SDL_Texture* stone_block;
 	SDL_Texture* background_image;
+	SDL_Texture* bumper;
+	SDL_Texture* bumper_light;
 };

@@ -29,6 +29,8 @@ bool ModuleSceneIntro::Start()
 	flipper = App->textures->Load("pinball/flipper_test.png");
 	stone_block = App->textures->Load("pinball/stone_block.png");
 	background_image = App->textures->Load("pinball/background_image.png");
+	bumper = App->textures->Load("pinball/bumper.png");
+	bumper_light = App->textures->Load("pinball/bumper_light.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -64,6 +66,7 @@ bool ModuleSceneIntro::Start()
 	stone_blocks[2].phys = App->physics->CreateRectangle(40, 525, 80, 21, true, this);
 	stone_blocks[2].phys->type = STONE_BLOCK;
 
+	bumpers[0] = App->physics->CreateCircle(250, 530, 21, true, this);
 
 	//joints
 	b2MouseJointDef def;
@@ -128,6 +131,9 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[0]->GetRotation());
 	flippers[1]->GetPosition(x, y);
 	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation());
+
+	bumpers[0]->GetPosition(x, y);
+	App->renderer->Blit(bumper, x, y);
 
 	//Draw background
 
