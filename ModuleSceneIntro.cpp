@@ -52,19 +52,34 @@ bool ModuleSceneIntro::Start()
 	background_phys[16] = App->physics->CreateChain(0, 0, background_piece16, 10, true);
 	background_phys[17] = App->physics->CreateChain(0, 0, background_piece17, 12, true);
 
-	ball_phys = App->physics->CreateCircle(449, 625, 8, false, this);
+	ball_phys = App->physics->CreateCircle(449, 625, 8);
 	ball_phys->body->SetBullet(true);
+	ball_phys->listener = this;
 	spring_phys = App->physics->CreateRectangle(449, 800, 21, 26);
 	
-	flippers[0] = App->physics->CreateFlipper(130, 895);
+	flippers[0] = App->physics->CreateFlipper(129, 894);
 	flippers[1] = App->physics->CreateFlipper(220, 895, true);
 
-	stone_blocks[0].phys = App->physics->CreateRectangle(40, 505, 80, 21, true, this);
+	stone_blocks[0].phys = App->physics->CreateRectangle(40, 505, 80, 21, true);
 	stone_blocks[0].phys->type = STONE_BLOCK;
-	stone_blocks[1].phys = App->physics->CreateRectangle(100, 525, 80, 21, true, this);
+	stone_blocks[1].phys = App->physics->CreateRectangle(100, 525, 80, 21, true);
 	stone_blocks[1].phys->type = STONE_BLOCK;
-	stone_blocks[2].phys = App->physics->CreateRectangle(40, 525, 80, 21, true, this);
+	stone_blocks[2].phys = App->physics->CreateRectangle(40, 525, 80, 21, true);
 	stone_blocks[2].phys->type = STONE_BLOCK;
+	stone_blocks[3].phys = App->physics->CreateRectangle(362, 610, 80, 21, true);
+	stone_blocks[3].phys->type = STONE_BLOCK;
+	stone_blocks[4].phys = App->physics->CreateRectangle(297, 245, 80, 21, true);
+	stone_blocks[4].phys->type = STONE_BLOCK;
+	stone_blocks[5].phys = App->physics->CreateRectangle(218, 245, 80, 21, true);
+	stone_blocks[5].phys->type = STONE_BLOCK;
+	stone_blocks[6].phys = App->physics->CreateRectangle(138, 245, 80, 21, true);
+	stone_blocks[6].phys->type = STONE_BLOCK;
+	stone_blocks[7].phys = App->physics->CreateRectangle(915, 181, 80, 21, true);
+	stone_blocks[7].phys->type = STONE_BLOCK;
+	stone_blocks[8].phys = App->physics->CreateRectangle(861, 548, 80, 21, true);
+	stone_blocks[8].phys->type = STONE_BLOCK;
+	stone_blocks[9].phys = App->physics->CreateRectangle(901, 569, 80, 21, true);
+	stone_blocks[9].phys->type = STONE_BLOCK;
 
 	bumpers[0] = App->physics->CreateCircle(250, 530, 21, true, this);
 
@@ -91,11 +106,12 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	/*if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	//deactivate or activate stone_blocks
+	for (int i = 0; i < 10; i++)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25));
-		circles.getLast()->data->listener = this;
-	}*/
+		if (!stone_blocks[i].active && stone_blocks[i].phys->body->IsActive()) stone_blocks[i].phys->body->SetActive(false);
+		else if (stone_blocks[i].active && !stone_blocks[i].phys->body->IsActive()) stone_blocks[i].phys->body->SetActive(true);
+	}
 
 	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 	{
@@ -120,17 +136,16 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(background_image, 0, 0);
 	int x, y;
 
-	stone_blocks[0].phys->GetPosition(x, y);
-	App->renderer->Blit(stone_block, x, y, stone_blocks[0].current_sprite);
-	stone_blocks[1].phys->GetPosition(x, y);
-	App->renderer->Blit(stone_block, x, y, stone_blocks[1].current_sprite);
-	stone_blocks[2].phys->GetPosition(x, y);
-	App->renderer->Blit(stone_block, x, y, stone_blocks[2].current_sprite);
+	for (int i = 0; i < 10; i++)
+	{
+		stone_blocks[i].phys->GetPosition(x, y);
+		App->renderer->Blit(stone_block, x, y, stone_blocks[i].current_sprite);
+	}
 
 	flippers[0]->GetPosition(x, y);
 	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[0]->GetRotation());
 	flippers[1]->GetPosition(x, y);
-	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation());
+	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation(), true);
 
 	bumpers[0]->GetPosition(x, y);
 	App->renderer->Blit(bumper, x, y);
@@ -157,7 +172,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	{
 		for (int i = 0; i < 10; i++)
 		{
-			if (stone_blocks[i].phys && stone_blocks[i].phys == bodyB) {
+			if (stone_blocks[i].phys == bodyB) {
 				stone_blocks[i].Hit();
 				break;
 			}
@@ -169,18 +184,17 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 void StoneBlock::Hit()
 {
 	hits++;
-	if (hits >= 2)
+	if (hits > 2)
 	{
-		hits = 2;
-		current_sprite = nullptr;
-		phys->body->SetActive(false);
+		hits = 3;
+		active = false;
 	}
-	else current_sprite = &sprites[hits];
+	current_sprite = &sprites[hits];
 }
 
 void StoneBlock::Restart()
 {
-	phys->body->SetActive(true);
+	active = true;
 	hits = 0;
 	current_sprite = &sprites[hits];
 }
@@ -190,5 +204,6 @@ StoneBlock::StoneBlock()
 	sprites[0] = { 0,0,80,21 };
 	sprites[1] = { 0,20,80,21 };
 	sprites[2] = { 0,40,80,21 };
+	sprites[3] = { 0,61,80,21 };
 	current_sprite = &sprites[hits];
 }
