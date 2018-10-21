@@ -8,6 +8,7 @@
 #include "StoneBlock.h"
 #include "Fruit.h"
 #include "Bumper.h"
+#include "Wheel.h"
 #include "ModuleSceneIntro.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -29,11 +30,12 @@ bool ModuleSceneIntro::Start()
 	background = App->textures->Load("pinball/background.png");
 	ball = App->textures->Load("pinball/ball.png");
 	spring = App->textures->Load("pinball/spring.png");
-	flipper = App->textures->Load("pinball/flipper_test.png");
+	flipper = App->textures->Load("pinball/flipper.png");
 	stone_block = App->textures->Load("pinball/stone_block.png");
 	background_image = App->textures->Load("pinball/background_image.png");
 	fruit = App->textures->Load("pinball/fruits.png");
 	bumper = App->textures->Load("pinball/bumper.png");
+	wheel = App->textures->Load("pinball/wheel.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
@@ -94,7 +96,7 @@ bool ModuleSceneIntro::Start()
 	CreateFruit(872, 386, 22, 18);
 	CreateFruit(872, 340, 22, 18);
 	CreateFruit(872, 294, 22, 18);
-	CreateFruit(770, 30, 22, 18); //top right
+	CreateFruit(770, 30, 22, 18);//top right
 	CreateFruit(832, 47, 22, 18);
 	CreateFruit(868, 80, 22, 18);
 	CreateFruit(888, 147, 22, 18);
@@ -111,6 +113,9 @@ bool ModuleSceneIntro::Start()
 	CreateBumper(300, 520, 21);
 	CreateBumper(300, 520, 21);
 	CreateBumper(400, 150, 21);
+	//Create wheels
+	CreateWheel(125, 74);
+	CreateWheel(520, 147);
 
 	//joints
 	b2MouseJointDef def;
@@ -183,6 +188,9 @@ update_status ModuleSceneIntro::Update()
 			case BUMPER:
 				App->renderer->Blit(bumper, x, y, interactable->data->GetSprite());
 			break;
+			case WHEEL:
+				App->renderer->Blit(wheel, x, y, NULL, 1.0f, interactable->data->phys->GetRotation(), false, false, PIXEL_TO_METERS(76), PIXEL_TO_METERS(76));
+			break;
 		}
 		interactable = interactable->next;
 	}
@@ -252,4 +260,103 @@ void ModuleSceneIntro::CreateBumper(int x, int y, int radius)
 	Bumper* bumper = new Bumper();
 	bumper->phys = body;
 	interactables.add(bumper);
+}
+
+void ModuleSceneIntro::CreateWheel(int x, int y)
+{
+	int wheel_vertex[132] = {
+		121, 124,
+		112, 130,
+		102, 135,
+		92, 139,
+		80, 140,
+		67, 139,
+		53, 135,
+		41, 129,
+		32, 124,
+		25, 118,
+		20, 109,
+		13, 96,
+		11, 88,
+		10, 77,
+		11, 65,
+		14, 54,
+		19, 44,
+		24, 35,
+		31, 28,
+		39, 21,
+		51, 15,
+		62, 12,
+		75, 11,
+		87, 12,
+		99, 14,
+		110, 20,
+		119, 27,
+		127, 35,
+		133, 45,
+		140, 58,
+		141, 73,
+		142, 94,
+		151, 94,
+		151, 73,
+		150, 58,
+		149, 51,
+		141, 38,
+		133, 27,
+		125, 18,
+		115, 11,
+		101, 5,
+		86, 1,
+		63, 1,
+		52, 4,
+		42, 8,
+		32, 15,
+		23, 23,
+		15, 31,
+		9, 39,
+		4, 53,
+		2, 66,
+		1, 77,
+		3, 92,
+		7, 107,
+		15, 120,
+		22, 129,
+		34, 138,
+		47, 145,
+		59, 149,
+		70, 151,
+		82, 151,
+		95, 148,
+		107, 144,
+		116, 140,
+		124, 135,
+		128, 128
+	};
+
+	b2MassData data;
+	data.mass = 36.664001f;
+	data.I = 22.52466f;
+	data.center = { 0.0f, 0.0f };
+	PhysBody* body = App->physics->CreateChain(x, y, wheel_vertex, 132);
+	body->body->SetMassData(&data);
+	Wheel* w = new Wheel();
+	w->phys = body;
+	w->phys->type = WHEEL;
+	PhysBody* pivot = App->physics->CreateCircle(x + 76, y + 76, 5, true);
+
+	b2RevoluteJointDef jointDef;
+	jointDef.bodyA = body->body;
+	jointDef.bodyB = pivot->body;
+	jointDef.localAnchorA = { PIXEL_TO_METERS(76), PIXEL_TO_METERS(76) };
+	jointDef.localAnchorB = { 0,0 };
+	jointDef.lowerAngle = 0.0F;
+	jointDef.upperAngle = 0.0F;
+	jointDef.enableLimit = true;
+	jointDef.collideConnected = false;
+	jointDef.enableMotor = false;
+	jointDef.maxMotorTorque = 100.0f;
+	jointDef.motorSpeed = 5.0f;
+	w->joint = (b2RevoluteJoint*) App->physics->world->CreateJoint(&jointDef);
+
+	interactables.add(w);
 }

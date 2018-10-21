@@ -21,12 +21,14 @@ public:
 	void CreateStoneBlock(int x, int y, int w, int h);
 	void CreateFruit(int x, int y, int w, int h);
 	void CreateBumper(int x, int y, int radius);
+	void CreateWheel(int x, int y);
 
 public:
 	PhysBody* ball_phys;
 	PhysBody* background_phys[18];
 	PhysBody* spring_phys;
 	PhysBody* flippers[5];
+	PhysBody* wheel_phys;
 
 	p2List<Interactable*> interactables;
 
@@ -40,5 +42,5 @@ public:
 	SDL_Texture* background_image;
 	SDL_Texture* fruit;
 	SDL_Texture* bumper;
-
+	SDL_Texture* wheel;
 };

@@ -77,6 +77,9 @@
     <ClInclude Include="Bumper.h">
       <Filter>Header Files\Interactables</Filter>
     </ClInclude>
+    <ClInclude Include="Wheel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -120,6 +123,9 @@
     </ClCompile>
     <ClCompile Include="Bumper.cpp">
       <Filter>Source Files\Interactables</Filter>
+    </ClCompile>
+    <ClCompile Include="Wheel.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
