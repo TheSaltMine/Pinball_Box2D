@@ -189,7 +189,7 @@ PhysBody* ModulePhysics::CreateFlipper(int x, int y, bool flipX)
 		jointDef.localAnchorB = { PIXEL_TO_METERS(30),PIXEL_TO_METERS(0) };
 		jointDef.motorSpeed = -20.0f;
 	}
-	
+
 	phys_bdy = CreateRectangle(x, y, 82, 20);
 	jointDef.lowerAngle = -0.1 * b2_pi;
 	jointDef.upperAngle = 0.1 * b2_pi;

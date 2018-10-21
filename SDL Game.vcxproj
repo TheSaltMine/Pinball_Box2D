@@ -91,6 +91,7 @@
     <ClInclude Include="p2Point.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StoneBlock.h" />
+    <ClInclude Include="Wheel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -108,9 +109,7 @@
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="StoneBlock.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="2D Physics - class 4.rc" />
+    <ClCompile Include="Wheel.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
