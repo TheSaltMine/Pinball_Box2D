@@ -9,5 +9,6 @@ public:
 	void Restart();
 	void Hit();
 	SDL_Rect* GetSprite();
-	bool doing_anim = false;
+	bool collected = false;
+	float timer = 0.0f;
 };

@@ -55,8 +55,8 @@ public:
 	bool CleanUp();
 
 	PhysBody* CreateCircle(int x, int y, int radius, bool static_body = false);
-	PhysBody* CreateRectangle(int x, int y, int width, int height, bool static_body = false);
-	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, bool static_body = false);
+	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType body_type = b2_dynamicBody);
+	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, b2BodyType body_type = b2_dynamicBody);
 	PhysBody* CreateChain(int x, int y, int* points, int size, bool static_body = false);
 	PhysBody* CreateFlipper(int x, int y, bool flipX = false);
 
