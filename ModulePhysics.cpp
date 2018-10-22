@@ -4,7 +4,6 @@
 #include "ModuleRender.h"
 #include "ModulePhysics.h"
 #include "p2Point.h"
-#include "ModuleSceneIntro.h"
 #include "math.h"
 
 #ifdef _DEBUG

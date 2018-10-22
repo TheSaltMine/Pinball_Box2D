@@ -41,7 +41,7 @@ bool ModuleSceneIntro::Start()
 	extra_ball = App->textures->Load("pinball/extra_ball.png");
 
 	#include "BackgroundVertex.h"
-	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 204, true);
+	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 226, true);
 	background_phys[1] = App->physics->CreateChain(0, 0, background_piece1, 62, true);
 	background_phys[2] = App->physics->CreateChain(0, 0, background_piece2, 24, true);
 	background_phys[3] = App->physics->CreateChain(0, 0, background_piece3, 28, true);

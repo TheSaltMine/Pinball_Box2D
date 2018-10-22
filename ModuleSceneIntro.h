@@ -21,12 +21,10 @@ public:
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact);
 	
 	void CreateBigbumpers(int x, int y, int w, int h);
-
 	void CreateStoneBlock(int x, int y, int w, int h);
 	void CreateFruit(int x, int y, int w, int h);
 	void CreateBumper(int x, int y, int radius);
 	void CreateWheel(int x, int y);
-
 
 public:
 	PhysBody* ball_phys;
@@ -51,4 +49,7 @@ public:
 	SDL_Texture* wheel;
 	SDL_Texture* bigbumper;
 	SDL_Texture* extra_ball;
+
+	int lives = 3;
+	int tilts = 3;
 };
