@@ -28,6 +28,17 @@ bool ModuleScore::Start()
 	number_rects[8] = {72,0,7,26};
 	number_rects[9] = {79,0,8,36};
 
+	extra_number_rects[0] = { 0,0,8,10 };
+	extra_number_rects[1] = { 10,0,8,10 };
+	extra_number_rects[2] = { 19,0,9,10 };
+	extra_number_rects[3] = { 29,0,8,10 };
+	extra_number_rects[4] = { 39,0,8,10 };
+	extra_number_rects[5] = { 49,0,8,10 };
+	extra_number_rects[6] = { 59,0,8,10 };
+	extra_number_rects[7] = { 69,0,8,10 };
+	extra_number_rects[8] = { 79,0,8,10 };
+	extra_number_rects[9] = { 89,0,8,10 };
+
 	lives_rects[0] = {0,0,12,13};
 	lives_rects[1] = {12,0,8,14};
 	lives_rects[2] = {20,0,10,14};
@@ -36,22 +47,36 @@ bool ModuleScore::Start()
 
 	font = App->textures->Load("pinball/score_font.png");
 	lives_font = App->textures->Load("pinball/lives_font.png");
+	extra_font = App->textures->Load("pinball/extra_score_font.png");
 	return true;
 }
 
 update_status ModuleScore::Update()
 {
 	// blit score
-	int x = 995;
-	int y = 63;
+	int current_x = 995;
+	int current_y = 63;
+	int prev_x = 1002;
+	int prev_y = 247;
+	int high_x = 1002;
+	int high_y = 189;
 	for (int i = 5; i > 0; i--)
 	{
 		if (digit_score[i] != -1)
 		{
-			App->renderer->Blit(font, x, y, &number_rects[digit_score[i]]);
-			x -= 12;
+			App->renderer->Blit(font, current_x, current_y, &number_rects[digit_score[i]]);
+			current_x -= 12;
 		}
-		else break;
+		if (prev_digit_score[i] != -1)
+		{
+			App->renderer->Blit(extra_font, prev_x, prev_y, &extra_number_rects[digit_score[i]]);
+			prev_x -= 14;
+		}
+		if (high_digit_score[i] != -1)
+		{
+			App->renderer->Blit(extra_font, high_x, high_y, &extra_number_rects[digit_score[i]]);
+			high_x -= 14;
+		}
 	}
 
 	App->renderer->Blit(lives_font, 997, 482, &lives_rects[App->scene_intro->lives]);
@@ -70,6 +95,7 @@ void ModuleScore::IncreaseScore(int points)
 {
 	score += points;
 	if (score > MAX_SCORE) score = MAX_SCORE;
+	if (score > high_score) high_score = score;
 
 	int index = 5;
 	int aux_score = score;
@@ -78,6 +104,31 @@ void ModuleScore::IncreaseScore(int points)
 		int digit = aux_score % 10;
 		aux_score /= 10;
 		digit_score[index] = digit;
+		index--;
+	}
+
+	index = 5;
+	aux_score = high_score;
+	while (aux_score > 0)
+	{
+		int digit = aux_score % 10;
+		aux_score /= 10;
+		high_digit_score[index] = digit;
+		index--;
+	}
+}
+
+void ModuleScore::Finished()
+{
+	previous_score = score;
+
+	int index = 5;
+	int aux_score = previous_score;
+	while (aux_score > 0)
+	{
+		int digit = aux_score % 10;
+		aux_score /= 10;
+		prev_digit_score[index] = digit;
 		index--;
 	}
 }

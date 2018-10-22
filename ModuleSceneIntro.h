@@ -30,6 +30,7 @@ public:
 	void LoseLife();
 	void BlitScene();
 	void ManageInputs();
+	void GameOver();
 
 public:
 	PhysBody* ball_phys;
@@ -55,8 +56,10 @@ public:
 	SDL_Texture* wheel;
 	SDL_Texture* bigbumper;
 	SDL_Texture* extra_ball;
+	SDL_Texture* game_over_text;
 
 	int lives = 3;
 	int tilts = 3;
 	bool restart = false;
+	bool game_over = false;
 };

@@ -15,8 +15,7 @@ public:
 	SDL_Rect* sprites;
 	PhysBody* phys = nullptr;
 	SDL_Rect* current_sprite = nullptr;
+	int score = 0;
 };
-
-
 
 #endif

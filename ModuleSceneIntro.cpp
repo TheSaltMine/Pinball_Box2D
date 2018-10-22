@@ -10,6 +10,7 @@
 #include "Bumper.h"
 #include "Wheel.h"
 #include "BigBumper.h"
+#include "ModuleScore.h"
 #include "ModuleSceneIntro.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -39,6 +40,7 @@ bool ModuleSceneIntro::Start()
 	wheel = App->textures->Load("pinball/wheel.png");
     bigbumper = App->textures->Load("pinball/bigbumper.png");
 	extra_ball = App->textures->Load("pinball/extra_ball.png");
+	game_over_text = App->textures->Load("pinball/game_over.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 226, true);
@@ -66,8 +68,11 @@ bool ModuleSceneIntro::Start()
 
 	spring_phys = App->physics->CreateRectangle(449, 800, 21, 26);
 	
-	flippers[0] = App->physics->CreateFlipper(129, 894);
-	flippers[1] = App->physics->CreateFlipper(220, 895, true);
+	flippers[0] = App->physics->CreateFlipper(129, 896);
+	flippers[1] = App->physics->CreateFlipper(220, 896, true);
+	flippers[2] = App->physics->CreateFlipper(600, 894);
+	flippers[3] = App->physics->CreateFlipper(691, 894, true);
+	flippers[4] = App->physics->CreateFlipper(500, 550);
 
 	extra_balls[0] = App->physics->CreateCircle(193, 156, 6);
 	extra_balls[0]->listener = this;
@@ -222,6 +227,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* 
 			if (interactable->data->phys == bodyB) 
 			{
 				interactable->data->Hit(contact, bodyA);
+				App->score->IncreaseScore(interactable->data->score);
 				break;
 			}
 			interactable = interactable->next;
@@ -285,10 +291,9 @@ void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h)
 void ModuleSceneIntro::LoseLife()
 {
 	lives--;
-	if (lives < 0)
+	if (lives == 0)
 	{
-		lives = 0;
-		//lose
+		GameOver();
 	}
 	else restart = true;
 }
@@ -424,10 +429,11 @@ void ModuleSceneIntro::BlitScene()
 		interactable = interactable->next;
 	}
 
-	flippers[0]->GetPosition(x, y);
-	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[0]->GetRotation());
-	flippers[1]->GetPosition(x, y);
-	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation(), true);
+	for (int i = 0; i < 5; i++)
+	{
+		flippers[i]->GetPosition(x, y);
+		App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[i]->GetRotation(), (i%2 == 0)? false:true);
+	}
 
 	//Draw background
 	for (int i = 0; i < 18; i++)
@@ -445,6 +451,8 @@ void ModuleSceneIntro::BlitScene()
 	App->renderer->Blit(ball, x, y, NULL, 1.0F, ball_phys->GetRotation());
 	spring_phys->GetPosition(x, y);
 	App->renderer->Blit(spring, x, y);
+
+	if(game_over) App->renderer->Blit(game_over_text, 0, 0);
 }
 
 void ModuleSceneIntro::ManageInputs()
@@ -463,10 +471,13 @@ void ModuleSceneIntro::ManageInputs()
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
 		flippers[1]->body->ApplyTorque(10000.0f, true);
+		flippers[3]->body->ApplyTorque(10000.0f, true);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
 		flippers[0]->body->ApplyTorque(-10000.0f, true);
+		flippers[2]->body->ApplyTorque(-10000.0f, true);
+		flippers[4]->body->ApplyTorque(-10000.0f, true);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
@@ -477,4 +488,17 @@ void ModuleSceneIntro::ManageInputs()
 			tilts--;
 		}
 	}
+
+	if (game_over && App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+	{
+		lives = 3;
+		game_over = false;
+		restart = true;
+	}
+}
+
+void ModuleSceneIntro::GameOver()
+{
+	game_over = true;
+	App->score->Finished();
 }

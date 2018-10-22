@@ -1,14 +1,18 @@
-#include "ModuleRender.h"
+#include "Application.h"
+#include "ModuleTextures.h"
 #include "ModulePhysics.h"
+#include "ModuleScore.h"
 #include "Fruit.h"
 
 
 Fruit::~Fruit()
 {
+
 }
 
 Fruit::Fruit()
 {
+	score = 100;
 	sprites = new SDL_Rect[5];
 	int sprite = rand() % 4;
 	sprites[0] = { 0,0,22,18 };
