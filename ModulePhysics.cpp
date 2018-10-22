@@ -288,15 +288,9 @@ update_status ModulePhysics::PostUpdate()
 
 			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 			{
-				const b2Fixture* fixture = b->GetFixtureList();
-				while (fixture != NULL)
+				if (f->GetShape()->TestPoint(b->GetTransform(), { PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()) }) == true && ((PhysBody*)f->GetBody()->GetUserData())->type == BALL)
 				{
-					if (fixture->GetShape()->TestPoint(b->GetTransform(), { PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()) }) == true)
-					{
-						selected_body = b;
-						break;
-					}
-					fixture = fixture->GetNext();
+					selected_body = b;
 				}
 			}
 		}

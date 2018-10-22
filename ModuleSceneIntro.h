@@ -8,6 +8,8 @@
 class PhysBody;
 class b2MouseJoint;
 
+#define START_POSITION { PIXEL_TO_METERS(449), PIXEL_TO_METERS(625) }
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -25,6 +27,9 @@ public:
 	void CreateFruit(int x, int y, int w, int h);
 	void CreateBumper(int x, int y, int radius);
 	void CreateWheel(int x, int y);
+	void LoseLife();
+	void BlitScene();
+	void ManageInputs();
 
 public:
 	PhysBody* ball_phys;
@@ -33,6 +38,7 @@ public:
 	PhysBody* flippers[5];
 	PhysBody* wheel_phys;
 	PhysBody* extra_balls[6];
+	PhysBody* death_triggers[2];
 
 	p2List<Interactable*> interactables;
 
@@ -52,4 +58,5 @@ public:
 
 	int lives = 3;
 	int tilts = 3;
+	bool restart = false;
 };

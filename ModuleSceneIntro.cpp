@@ -63,6 +63,7 @@ bool ModuleSceneIntro::Start()
 	ball_phys = App->physics->CreateCircle(449, 625, 8);
 	ball_phys->body->SetBullet(true);
 	ball_phys->listener = this;
+
 	spring_phys = App->physics->CreateRectangle(449, 800, 21, 26);
 	
 	flippers[0] = App->physics->CreateFlipper(129, 894);
@@ -87,6 +88,10 @@ bool ModuleSceneIntro::Start()
 	extra_balls[5]->listener = this;
 	extra_balls[5]->type = EXTRA_BALL;
 
+	death_triggers[0] = App->physics->CreateRectangleSensor(210, 980, 229, 35, b2_staticBody);
+	death_triggers[0]->type = DEATH;
+	death_triggers[1] = App->physics->CreateRectangleSensor(690, 980, 229, 35, b2_staticBody);
+	death_triggers[1]->type = DEATH;
 
 	CreateBigbumpers(70, 720, 41, 123);
 
@@ -175,86 +180,41 @@ update_status ModuleSceneIntro::Update()
 	{
 		if (!interactable->data->active && interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(false);
 		else if (interactable->data->active && !interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(true);
+		if (restart) interactable->data->Restart();
 		interactable = interactable->next;
 	}
-
-
-	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+	if (restart)
 	{
-		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(900) });
-		mouse_joint->SetFrequency(1.0f);
-	}
-	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
-	{
-		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) });
-		mouse_joint->SetFrequency(20.0f);
-	}
+		//restart balls
+		ball_phys->body->SetTransform(START_POSITION, ball_phys->GetRotation());
+		extra_balls[0]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[0]->GetRotation());
+		extra_balls[0]->body->SetLinearVelocity({ 0.0f,0.0f });
+		extra_balls[1]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[1]->GetRotation());
+		extra_balls[1]->body->SetLinearVelocity({ 0.0f,0.0f });
+		extra_balls[2]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[2]->GetRotation());
+		extra_balls[2]->body->SetLinearVelocity({ 0.0f,0.0f });
+		extra_balls[3]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[3]->GetRotation());
+		extra_balls[3]->body->SetLinearVelocity({ 0.0f,0.0f });
+		extra_balls[4]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[4]->GetRotation());
+		extra_balls[4]->body->SetLinearVelocity({ 0.0f,0.0f });
+		extra_balls[5]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[5]->GetRotation());
+		extra_balls[5]->body->SetLinearVelocity({ 0.0f,0.0f });
 
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	{
-		flippers[1]->body->ApplyTorque(10000.0f, true);
-	}
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	{
-		flippers[0]->body->ApplyTorque(-10000.0f, true);
-	}
+		tilts = 3;
 
-	App->renderer->Blit(background_image, 0, 0);
-	int x, y;
-
-	interactable = interactables.start;
-	while (interactable != NULL)
-	{
-		interactable->data->phys->GetPosition(x, y);
-		switch (interactable->data->phys->type)
-		{
-			case STONE_BLOCK:
-			App->renderer->Blit(stone_block, x, y, interactable->data->GetSprite());
-			break;
-			case FRUIT:
-				App->renderer->Blit(fruit, x, y, interactable->data->GetSprite());
-			break;
-			case BUMPER:
-				App->renderer->Blit(bumper, x, y, interactable->data->GetSprite());
-			break;
-			case WHEEL:
-				App->renderer->Blit(wheel, x, y, NULL, 1.0f, interactable->data->phys->GetRotation(), false, false, PIXEL_TO_METERS(76), PIXEL_TO_METERS(76));
-			break;
-			case BIGBUMPER:
-				App->renderer->Blit(bigbumper, x, y, interactable->data->GetSprite());
-			break;
-		}
-		interactable = interactable->next;
+		restart = false;
 	}
 
-	flippers[0]->GetPosition(x, y);
-	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[0]->GetRotation());
-	flippers[1]->GetPosition(x, y);
-	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation(), true);
+	ManageInputs();
 
-	//Draw background
-	for (int i = 0; i < 18; i++)
-	{
-		background_phys[i]->GetPosition(x, y);
-		App->renderer->Blit(background, x, y);
-	}
-	for (int i = 0; i < 6; i++)
-	{
-		extra_balls[i]->GetPosition(x, y);
-		App->renderer->Blit(extra_ball, x, y);
-	}
-
-	ball_phys->GetPosition(x, y);
-	App->renderer->Blit(ball, x, y, NULL, 1.0F, ball_phys->GetRotation());
-	spring_phys->GetPosition(x, y);
-	App->renderer->Blit(spring, x, y);
+	BlitScene();
 
 	return UPDATE_CONTINUE;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* contact)
 {
-	if (bodyB->type != BACKGROUND)
+	if (bodyB->type != BACKGROUND && bodyB->type != DEATH)
 	{
 		p2List_item<Interactable*>* interactable = interactables.start;
 		while (interactable != NULL)
@@ -266,6 +226,10 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Contact* 
 			}
 			interactable = interactable->next;
 		}
+	}
+	else if (bodyB->type == DEATH)
+	{
+		if (bodyA->type == BALL) LoseLife();
 	}
 }
 
@@ -286,6 +250,7 @@ void ModuleSceneIntro::CreateFruit(int x, int y, int w, int h)
 	body->type = FRUIT;
 	Fruit* fruit = new Fruit();
 	fruit->phys = body;
+	fruit->start_position = fruit->phys->body->GetPosition();
 	interactables.add(fruit);
 }
 
@@ -311,11 +276,21 @@ void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h)
 		2, 0
 	};
 	body = App->physics->CreateChain(x,y, bigbumpercoord, 10, true);
-	//body = App->physics->CreateRectangle(x, y, w, h, b2_staticBody);
 	body->type = BIGBUMPER;
 	BigBumper* bigbumper = new BigBumper();
 	bigbumper->phys = body;
 	interactables.add(bigbumper);
+}
+
+void ModuleSceneIntro::LoseLife()
+{
+	lives--;
+	if (lives < 0)
+	{
+		lives = 0;
+		//lose
+	}
+	else restart = true;
 }
 
 void ModuleSceneIntro::CreateWheel(int x, int y)
@@ -413,6 +388,93 @@ void ModuleSceneIntro::CreateWheel(int x, int y)
 	jointDef.maxMotorTorque = 100.0f;
 	jointDef.motorSpeed = 5.0f;
 	w->joint = (b2RevoluteJoint*) App->physics->world->CreateJoint(&jointDef);
+	w->start_rotation = body->GetRotation();
+	w->start_position = { PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) };
 
 	interactables.add(w);
+}
+
+void ModuleSceneIntro::BlitScene()
+{
+	App->renderer->Blit(background_image, 0, 0);
+	int x, y;
+
+	p2List_item<Interactable*>* interactable = interactables.start;
+	while (interactable != NULL)
+	{
+		interactable->data->phys->GetPosition(x, y);
+		switch (interactable->data->phys->type)
+		{
+		case STONE_BLOCK:
+			App->renderer->Blit(stone_block, x, y, interactable->data->GetSprite());
+			break;
+		case FRUIT:
+			App->renderer->Blit(fruit, x, y, interactable->data->GetSprite());
+			break;
+		case BUMPER:
+			App->renderer->Blit(bumper, x, y, interactable->data->GetSprite());
+			break;
+		case WHEEL:
+			App->renderer->Blit(wheel, x, y, NULL, 1.0f, interactable->data->phys->GetRotation(), false, false, PIXEL_TO_METERS(76), PIXEL_TO_METERS(76));
+			break;
+		case BIGBUMPER:
+			App->renderer->Blit(bigbumper, x, y, interactable->data->GetSprite());
+			break;
+		}
+		interactable = interactable->next;
+	}
+
+	flippers[0]->GetPosition(x, y);
+	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[0]->GetRotation());
+	flippers[1]->GetPosition(x, y);
+	App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[1]->GetRotation(), true);
+
+	//Draw background
+	for (int i = 0; i < 18; i++)
+	{
+		background_phys[i]->GetPosition(x, y);
+		App->renderer->Blit(background, x, y);
+	}
+	for (int i = 0; i < 6; i++)
+	{
+		extra_balls[i]->GetPosition(x, y);
+		App->renderer->Blit(extra_ball, x, y);
+	}
+
+	ball_phys->GetPosition(x, y);
+	App->renderer->Blit(ball, x, y, NULL, 1.0F, ball_phys->GetRotation());
+	spring_phys->GetPosition(x, y);
+	App->renderer->Blit(spring, x, y);
+}
+
+void ModuleSceneIntro::ManageInputs()
+{
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+	{
+		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(900) });
+		mouse_joint->SetFrequency(1.0f);
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+	{
+		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) });
+		mouse_joint->SetFrequency(20.0f);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	{
+		flippers[1]->body->ApplyTorque(10000.0f, true);
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	{
+		flippers[0]->body->ApplyTorque(-10000.0f, true);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+	{
+		if (tilts > 0)
+		{
+			ball_phys->body->ApplyForceToCenter({ 0.0f,80.0f }, true);
+			tilts--;
+		}
+	}
 }

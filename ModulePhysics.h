@@ -24,7 +24,8 @@ enum ColliderType
 	FRUIT,
 	WHEEL,
 	BIGBUMPER,
-	EXTRA_BALL
+	EXTRA_BALL,
+	DEATH
 };
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody

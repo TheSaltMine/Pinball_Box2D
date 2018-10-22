@@ -26,4 +26,5 @@ void Wheel::Restart()
 {
 	joint->EnableMotor(false);
 	joint->EnableLimit(true);
+	phys->body->SetTransform(start_position, start_rotation);
 }

@@ -10,5 +10,6 @@ public:
 	void Hit(b2Contact* contact, PhysBody* bodyA);
 	SDL_Rect* GetSprite();
 	bool collected = false;
+	b2Vec2 start_position;
 	float timer = 0.0f;
 };

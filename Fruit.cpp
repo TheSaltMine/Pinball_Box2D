@@ -26,6 +26,8 @@ void Fruit::Restart()
 	current_sprite = &sprites[rand() % 4];
 	collected = false;
 	timer = 0.0f;
+	phys->body->SetLinearVelocity({ 0.0f, 0.0f });
+	phys->body->SetTransform(start_position, phys->GetRotation());
 }
 
 void Fruit::Hit(b2Contact* contact, PhysBody* bodyA)
