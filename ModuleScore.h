@@ -28,6 +28,7 @@ public:
 	bool CleanUp();
 
 	void IncreaseScore(int points);
+	void showBonus();
 	void Finished();
 };
 

@@ -10,6 +10,7 @@
 #include "Bumper.h"
 #include "Wheel.h"
 #include "BigBumper.h"
+#include "Mushroom.h"
 #include "ModuleScore.h"
 #include "ModuleSceneIntro.h"
 
@@ -42,6 +43,8 @@ bool ModuleSceneIntro::Start()
 	extra_ball = App->textures->Load("pinball/extra_ball.png");
 	game_over_text = App->textures->Load("pinball/game_over.png");
 	start_menu = App->textures->Load("pinball/start_menu.png");
+	mushroom = App->textures->Load("pinball/mushroom.png");
+	bonus = App->textures->Load("pinball/bonus.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 226, true);
@@ -155,6 +158,8 @@ bool ModuleSceneIntro::Start()
 	//Create wheels
 	CreateWheel(125, 74);
 	CreateWheel(520, 147);
+
+	CreateMushroom(216, 700, 8,90);
 
 
 	//joints
@@ -270,6 +275,19 @@ void ModuleSceneIntro::CreateBumper(int x, int y, int radius)
 	bumper->phys = body;
 	interactables.add(bumper);
 
+}
+
+void ModuleSceneIntro::CreateMushroom(int x, int y, int radius, int rotation)
+{
+	PhysBody* body;
+	body = App->physics->CreateCircle(x, y, radius, true);
+	body->type = MUSHROOM;
+	Mushroom* mushroom = new Mushroom();
+	mushroom->phys = body;
+	mushroom->start_position = mushroom->phys->body->GetPosition();
+	mushroom->start_rotation = rotation;
+	mushroom->phys->body->SetTransform(mushroom->start_position, mushroom->start_rotation);
+	interactables.add(mushroom);
 }
 
 void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h)
@@ -426,6 +444,9 @@ void ModuleSceneIntro::BlitScene()
 		case BIGBUMPER:
 			App->renderer->Blit(bigbumper, x, y, interactable->data->GetSprite());
 			break;
+		case MUSHROOM:
+			App->renderer->Blit(mushroom, x, y, interactable->data->GetSprite(),0, interactable->data->phys->GetRotation());
+		break;
 		}
 		interactable = interactable->next;
 	}

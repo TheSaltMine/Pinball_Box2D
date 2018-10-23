@@ -121,6 +121,11 @@ void ModuleScore::IncreaseScore(int points)
 	}
 }
 
+void ModuleScore::showBonus()
+{
+	IncreaseScore(5000);
+}
+
 void ModuleScore::Finished()
 {
 	previous_score = score;

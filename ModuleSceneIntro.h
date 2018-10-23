@@ -34,6 +34,7 @@ public:
 	void CreateStoneBlock(int x, int y, int w, int h);
 	void CreateFruit(int x, int y, int w, int h);
 	void CreateBumper(int x, int y, int radius);
+	void CreateMushroom(int x, int y, int radius,int rotation);
 	void CreateWheel(int x, int y);
 	void LoseLife();
 	void BlitScene();
@@ -66,6 +67,8 @@ public:
 	SDL_Texture* extra_ball;
 	SDL_Texture* game_over_text;
 	SDL_Texture* start_menu;
+	SDL_Texture* bonus;
+	SDL_Texture* mushroom;
 
 	int lives = 3;
 	int tilts = 3;
