@@ -12,6 +12,7 @@
 #include "BigBumper.h"
 #include "ModuleScore.h"
 #include "ModuleSceneIntro.h"
+#include <ctime>
 
 ModuleSceneIntro::ModuleSceneIntro(bool start_enabled) : Module(start_enabled)
 {
@@ -24,6 +25,8 @@ ModuleSceneIntro::~ModuleSceneIntro()
 // Load assets
 bool ModuleSceneIntro::Start()
 {
+	srand(time(0));
+
 	LOG("Loading Intro assets");
 	bool ret = true;
 	App->renderer->camera.x = App->renderer->camera.y = 0;
