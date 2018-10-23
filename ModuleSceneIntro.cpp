@@ -41,6 +41,7 @@ bool ModuleSceneIntro::Start()
     bigbumper = App->textures->Load("pinball/bigbumper.png");
 	extra_ball = App->textures->Load("pinball/extra_ball.png");
 	game_over_text = App->textures->Load("pinball/game_over.png");
+	start_menu = App->textures->Load("pinball/start_menu.png");
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 226, true);
@@ -185,10 +186,10 @@ update_status ModuleSceneIntro::Update()
 	{
 		if (!interactable->data->active && interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(false);
 		else if (interactable->data->active && !interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(true);
-		if (restart) interactable->data->Restart();
+		if (state == RESTART) interactable->data->Restart();
 		interactable = interactable->next;
 	}
-	if (restart)
+	if (state == RESTART)
 	{
 		//restart balls
 		ball_phys->body->SetTransform(START_POSITION, ball_phys->GetRotation());
@@ -207,7 +208,7 @@ update_status ModuleSceneIntro::Update()
 
 		tilts = 3;
 
-		restart = false;
+		state = PLAYING;
 	}
 
 	ManageInputs();
@@ -295,7 +296,7 @@ void ModuleSceneIntro::LoseLife()
 	{
 		GameOver();
 	}
-	else restart = true;
+	else state = RESTART;
 }
 
 void ModuleSceneIntro::CreateWheel(int x, int y)
@@ -452,53 +453,68 @@ void ModuleSceneIntro::BlitScene()
 	spring_phys->GetPosition(x, y);
 	App->renderer->Blit(spring, x, y);
 
-	if(game_over) App->renderer->Blit(game_over_text, 0, 0);
+	if(state == GAME_OVER) App->renderer->Blit(game_over_text, 0, 0);
+	else if(state == START_MENU) App->renderer->Blit(start_menu, 0, 0);
 }
 
 void ModuleSceneIntro::ManageInputs()
 {
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+	if (state == PLAYING)
 	{
-		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(900) });
-		mouse_joint->SetFrequency(1.0f);
-	}
-	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
-	{
-		mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) });
-		mouse_joint->SetFrequency(20.0f);
-	}
-
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	{
-		flippers[1]->body->ApplyTorque(10000.0f, true);
-		flippers[3]->body->ApplyTorque(10000.0f, true);
-	}
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	{
-		flippers[0]->body->ApplyTorque(-10000.0f, true);
-		flippers[2]->body->ApplyTorque(-10000.0f, true);
-		flippers[4]->body->ApplyTorque(-10000.0f, true);
-	}
-
-	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
-	{
-		if (tilts > 0)
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 		{
-			ball_phys->body->ApplyForceToCenter({ 0.0f,80.0f }, true);
-			tilts--;
+			mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(900) });
+			mouse_joint->SetFrequency(1.0f);
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+		{
+			mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) });
+			mouse_joint->SetFrequency(20.0f);
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		{
+			flippers[1]->body->ApplyTorque(10000.0f, true);
+			flippers[3]->body->ApplyTorque(10000.0f, true);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		{
+			flippers[0]->body->ApplyTorque(-10000.0f, true);
+			flippers[2]->body->ApplyTorque(-10000.0f, true);
+			flippers[4]->body->ApplyTorque(-10000.0f, true);
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+		{
+			if (tilts > 0)
+			{
+				ball_phys->body->ApplyForceToCenter({ 0.0f,80.0f }, true);
+				tilts--;
+			}
 		}
 	}
 
-	if (game_over && App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+	if (state == START_MENU && App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 	{
-		lives = 3;
-		game_over = false;
-		restart = true;
+		if (lives == 0) {
+			state = RESTART;
+			lives = 3;
+		}
+		else state = PLAYING;
+	}
+
+	if (state == GAME_OVER)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
+			state = RESTART;
+			lives = 3;
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) state = START_MENU;
 	}
 }
 
 void ModuleSceneIntro::GameOver()
 {
-	game_over = true;
+	state = GAME_OVER;
 	App->score->Finished();
 }

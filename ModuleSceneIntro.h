@@ -10,6 +10,14 @@ class b2MouseJoint;
 
 #define START_POSITION { PIXEL_TO_METERS(449), PIXEL_TO_METERS(625) }
 
+enum GameState
+{
+	PLAYING,
+	RESTART,
+	GAME_OVER,
+	START_MENU
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -57,9 +65,9 @@ public:
 	SDL_Texture* bigbumper;
 	SDL_Texture* extra_ball;
 	SDL_Texture* game_over_text;
+	SDL_Texture* start_menu;
 
 	int lives = 3;
 	int tilts = 3;
-	bool restart = false;
-	bool game_over = false;
+	GameState state = START_MENU;
 };

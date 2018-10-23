@@ -53,35 +53,38 @@ bool ModuleScore::Start()
 
 update_status ModuleScore::Update()
 {
-	// blit score
-	int current_x = 995;
-	int current_y = 63;
-	int prev_x = 1002;
-	int prev_y = 247;
-	int high_x = 1002;
-	int high_y = 189;
-	for (int i = 5; i > 0; i--)
+	if (App->scene_intro->state != START_MENU)
 	{
-		if (digit_score[i] != -1)
+		// blit score
+		int current_x = 995;
+		int current_y = 63;
+		int prev_x = 1002;
+		int prev_y = 247;
+		int high_x = 1002;
+		int high_y = 189;
+		for (int i = 5; i > 0; i--)
 		{
-			App->renderer->Blit(font, current_x, current_y, &number_rects[digit_score[i]]);
-			current_x -= 12;
+			if (digit_score[i] != -1)
+			{
+				App->renderer->Blit(font, current_x, current_y, &number_rects[digit_score[i]]);
+				current_x -= 12;
+			}
+			if (prev_digit_score[i] != -1)
+			{
+				App->renderer->Blit(extra_font, prev_x, prev_y, &extra_number_rects[digit_score[i]]);
+				prev_x -= 14;
+			}
+			if (high_digit_score[i] != -1)
+			{
+				App->renderer->Blit(extra_font, high_x, high_y, &extra_number_rects[digit_score[i]]);
+				high_x -= 14;
+			}
 		}
-		if (prev_digit_score[i] != -1)
-		{
-			App->renderer->Blit(extra_font, prev_x, prev_y, &extra_number_rects[digit_score[i]]);
-			prev_x -= 14;
-		}
-		if (high_digit_score[i] != -1)
-		{
-			App->renderer->Blit(extra_font, high_x, high_y, &extra_number_rects[digit_score[i]]);
-			high_x -= 14;
-		}
-	}
 
-	App->renderer->Blit(lives_font, 997, 482, &lives_rects[App->scene_intro->lives]);
-	App->renderer->Blit(lives_font, 997, 526, &lives_rects[App->scene_intro->tilts]);
+		App->renderer->Blit(lives_font, 997, 482, &lives_rects[App->scene_intro->lives]);
+		App->renderer->Blit(lives_font, 997, 526, &lives_rects[App->scene_intro->tilts]);
 
+	}	
 
 	return UPDATE_CONTINUE;
 }
