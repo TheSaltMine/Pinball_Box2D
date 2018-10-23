@@ -7,7 +7,7 @@
 #include "ModuleScore.h"
 
 
-ModuleScore::ModuleScore(Application* app, bool start_enabled): Module(app, start_enabled)
+ModuleScore::ModuleScore(bool start_enabled): Module(start_enabled)
 {
 }
 
@@ -45,9 +45,9 @@ bool ModuleScore::Start()
 	lives_rects[3] = {30,0,10,14};
 
 
-	font = App->textures->Load("pinball/score_font.png");
-	lives_font = App->textures->Load("pinball/lives_font.png");
-	extra_font = App->textures->Load("pinball/extra_score_font.png");
+	font = App->textures->Load("pinball/textures/score_font.png");
+	lives_font = App->textures->Load("pinball/textures/lives_font.png");
+	extra_font = App->textures->Load("pinball/textures/extra_score_font.png");
 	return true;
 }
 
@@ -119,11 +119,6 @@ void ModuleScore::IncreaseScore(int points)
 		high_digit_score[index] = digit;
 		index--;
 	}
-}
-
-void ModuleScore::showBonus()
-{
-	IncreaseScore(5000);
 }
 
 void ModuleScore::Finished()

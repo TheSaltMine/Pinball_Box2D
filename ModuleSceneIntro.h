@@ -8,7 +8,7 @@
 class PhysBody;
 class b2MouseJoint;
 
-#define START_POSITION { PIXEL_TO_METERS(449), PIXEL_TO_METERS(625) }
+#define START_POSITION { PIXEL_TO_METERS(449), PIXEL_TO_METERS(850) }
 
 enum GameState
 {
@@ -18,10 +18,31 @@ enum GameState
 	START_MENU
 };
 
+enum FX 
+{
+	FX_BIGBUMPER,
+	FX_BONUS,
+	FX_BUMPER,
+	FX_FLIPPER,
+	FX_FRUIT,
+	FX_GAME_OVER,
+	FX_LAUNCHER,
+	FX_MUSHROOM,
+	FX_START,
+	FX_STONE_BLOCK
+};
+
+enum Groups
+{
+	OFF,
+	ON,
+	BONUS
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
-	ModuleSceneIntro(Application* app, bool start_enabled = true);
+	ModuleSceneIntro(bool start_enabled = true);
 	~ModuleSceneIntro();
 
 	bool Start();
@@ -34,8 +55,10 @@ public:
 	void CreateStoneBlock(int x, int y, int w, int h);
 	void CreateFruit(int x, int y, int w, int h);
 	void CreateBumper(int x, int y, int radius);
-	void CreateMushroom(int x, int y, int radius,int rotation);
+	void CreateMushroom(int x, int y, int radius,int rotation, int group);
 	void CreateWheel(int x, int y);
+	void chackBonus(Interactable* object);
+	void Bonus();
 	void LoseLife();
 	void BlitScene();
 	void ManageInputs();
@@ -44,7 +67,7 @@ public:
 public:
 	PhysBody* ball_phys;
 	PhysBody* background_phys[18];
-	PhysBody* spring_phys;
+	PhysBody* launcher_phys;
 	PhysBody* flippers[5];
 	PhysBody* wheel_phys;
 	PhysBody* extra_balls[6];
@@ -56,7 +79,7 @@ public:
 
 	SDL_Texture* ball;
 	SDL_Texture* background;
-	SDL_Texture* spring;
+	SDL_Texture* launcher;
 	SDL_Texture* flipper;
 	SDL_Texture* stone_block;
 	SDL_Texture* background_image;
@@ -72,5 +95,10 @@ public:
 
 	int lives = 3;
 	int tilts = 3;
+	Groups G1 = ON;
+	Groups G2 = ON;
+	float timer = 0;
+	unsigned int fx[10];
+	char* music_path = "pinball/music/music.ogg";
 	GameState state = START_MENU;
 };

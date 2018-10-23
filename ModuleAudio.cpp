@@ -6,7 +6,7 @@
 
 #pragma comment( lib, "SDL_mixer/libx86/SDL2_mixer.lib" )
 
-ModuleAudio::ModuleAudio(Application* app, bool start_enabled) : Module(app, start_enabled), music(NULL)
+ModuleAudio::ModuleAudio(bool start_enabled) : Module(start_enabled), music(NULL)
 {}
 
 // Destructor
@@ -160,6 +160,7 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 	
 	if(fx.At(id-1))
 	{
+		chunk = fx.At(id - 1)->data;
 		Mix_PlayChannel(-1, chunk, repeat);
 		ret = true;
 	}

@@ -16,6 +16,8 @@ public:
 	PhysBody* phys = nullptr;
 	SDL_Rect* current_sprite = nullptr;
 	int score = 0;
+	unsigned int fx;
+	int group = 0;
 };
 
 #endif

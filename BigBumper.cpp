@@ -1,5 +1,8 @@
+#include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
+#include "ModuleAudio.h"
+#include "ModuleSceneIntro.h"
 #include "BigBumper.h"
 
 
@@ -33,11 +36,13 @@ void BigBumper::Hit(b2Contact* contact, PhysBody* bodyA)
 	current_sprite = &sprites[1];
 
 
-	b2WorldManifold worldManifold;
+	/*b2WorldManifold worldManifold;
 	contact->GetWorldManifold(&worldManifold);
 
-	float normalLength = 0.1f;
-	bodyA->body->ApplyForce(normalLength * 1000 * worldManifold.normal, worldManifold.points[0], false);
+	bodyA->body->SetLinearVelocity({0.0f, 0.0f});
+	//bodyA->body->SetAngularVelocity(30);
+	bodyA->body->ApplyForce(200 * worldManifold.normal, worldManifold.points[0], true);*/
+	App->audio->PlayFx(App->scene_intro->fx[FX_BIGBUMPER]);
 }
 
 BigBumper::BigBumper()

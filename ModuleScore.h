@@ -6,7 +6,7 @@
 class ModuleScore : public Module
 {
 public:
-	ModuleScore(Application* app, bool start_enabled = true);
+	ModuleScore(bool start_enabled = true);
 	~ModuleScore();
 
 	SDL_Texture* font;

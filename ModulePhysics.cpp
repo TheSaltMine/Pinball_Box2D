@@ -12,11 +12,11 @@
 #pragma comment( lib, "Box2D/libx86/Rrelease/Box2D.lib" )
 #endif
 
-ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 {
 	world = NULL;
 	mouse_joint = NULL;
-	debug = true;
+	debug = false;
 }
 
 // Destructor
@@ -57,10 +57,10 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType static_body, int filterindex)
 {
 	b2BodyDef body;
-	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
+	body.type = static_body;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -71,6 +71,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
 	fixture.restitution = 0.2f;
+	fixture.filter.groupIndex = filterindex;
 
 	b->CreateFixture(&fixture);
 
@@ -178,13 +179,13 @@ PhysBody* ModulePhysics::CreateFlipper(int x, int y, bool flipX)
 	b2RevoluteJointDef jointDef;
 	if (!flipX)
 	{
-		pivot = CreateCircle(x, y, 5, true);
+		pivot = CreateCircle(x, y, 5, b2_kinematicBody);
 		jointDef.localAnchorB = { PIXEL_TO_METERS(-30),PIXEL_TO_METERS(0) };
 		jointDef.motorSpeed = 20.0f;
 	}
 	else
 	{
-		pivot = CreateCircle(x+82, y, 5, true);
+		pivot = CreateCircle(x+82, y, 5, b2_kinematicBody);
 		jointDef.localAnchorB = { PIXEL_TO_METERS(30),PIXEL_TO_METERS(0) };
 		jointDef.motorSpeed = -20.0f;
 	}
