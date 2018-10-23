@@ -6,7 +6,7 @@
 class ModulePlayer : public Module
 {
 public:
-	ModulePlayer(Application* app, bool start_enabled = true);
+	ModulePlayer(bool start_enabled = true);
 	virtual ~ModulePlayer();
 
 	bool Start();

@@ -13,7 +13,7 @@
 #include "ModuleScore.h"
 #include "ModuleSceneIntro.h"
 
-ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleSceneIntro::ModuleSceneIntro(bool start_enabled) : Module(start_enabled)
 {
 	background = ball = NULL;
 }
@@ -26,22 +26,35 @@ bool ModuleSceneIntro::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
-
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 
-	background = App->textures->Load("pinball/background.png");
-	ball = App->textures->Load("pinball/ball.png");
-	spring = App->textures->Load("pinball/spring.png");
-	flipper = App->textures->Load("pinball/flipper.png");
-	stone_block = App->textures->Load("pinball/stone_block.png");
-	background_image = App->textures->Load("pinball/background_image.png");
-	fruit = App->textures->Load("pinball/fruits.png");
-	bumper = App->textures->Load("pinball/bumper.png");
-	wheel = App->textures->Load("pinball/wheel.png");
-    bigbumper = App->textures->Load("pinball/bigbumper.png");
-	extra_ball = App->textures->Load("pinball/extra_ball.png");
-	game_over_text = App->textures->Load("pinball/game_over.png");
-	start_menu = App->textures->Load("pinball/start_menu.png");
+	background = App->textures->Load("pinball/textures/background.png");
+	ball = App->textures->Load("pinball/textures/ball.png");
+	launcher = App->textures->Load("pinball/textures/launcher.png");
+	flipper = App->textures->Load("pinball/textures/flipper.png");
+	stone_block = App->textures->Load("pinball/textures/stone_block.png");
+	background_image = App->textures->Load("pinball/textures/background_image.png");
+	fruit = App->textures->Load("pinball/textures/fruits.png");
+	bumper = App->textures->Load("pinball/textures/bumper.png");
+	wheel = App->textures->Load("pinball/textures/wheel.png");
+    bigbumper = App->textures->Load("pinball/textures/bigbumper.png");
+	extra_ball = App->textures->Load("pinball/textures/extra_ball.png");
+	game_over_text = App->textures->Load("pinball/textures/game_over.png");
+	start_menu = App->textures->Load("pinball/textures/start_menu.png");
+
+	//load audio
+	fx[FX_BIGBUMPER] = App->audio->LoadFx("pinball/fx/fx_bigbumper.wav");
+	fx[FX_BONUS] = App->audio->LoadFx("pinball/fx/fx_bonus.wav");
+	fx[FX_BUMPER] = App->audio->LoadFx("pinball/fx/fx_bumper.wav");
+	fx[FX_FLIPPER] = App->audio->LoadFx("pinball/fx/fx_flipper.wav");
+	fx[FX_FRUIT] = App->audio->LoadFx("pinball/fx/fx_fruit.wav");
+	fx[FX_GAME_OVER] = App->audio->LoadFx("pinball/fx/fx_game_over.wav");
+	fx[FX_LAUNCHER] = App->audio->LoadFx("pinball/fx/fx_launcher.wav");
+	fx[FX_MUSHROOM] = App->audio->LoadFx("pinball/fx/fx_shroom.wav");
+	fx[FX_START] = App->audio->LoadFx("pinball/fx/fx_startround.wav");
+	fx[FX_STONE_BLOCK] = App->audio->LoadFx("pinball/fx/fx_stoneblock.wav");
+
+	App->audio->PlayMusic(music_path);
 
 	#include "BackgroundVertex.h"
 	background_phys[0] = App->physics->CreateChain(0, 0, background_vertex, 226, true);
@@ -63,11 +76,12 @@ bool ModuleSceneIntro::Start()
 	background_phys[16] = App->physics->CreateChain(0, 0, background_piece16, 10, true);
 	background_phys[17] = App->physics->CreateChain(0, 0, background_piece17, 12, true);
 
-	ball_phys = App->physics->CreateCircle(449, 625, 8);
+	ball_phys = App->physics->CreateCircle(449, 850, 8, false, -2);
 	ball_phys->body->SetBullet(true);
 	ball_phys->listener = this;
 
-	spring_phys = App->physics->CreateRectangle(449, 800, 21, 26);
+	launcher_phys = App->physics->CreateRectangle(449, 935, 21, 26);
+	launcher_phys->body->SetFixedRotation(true);
 	
 	flippers[0] = App->physics->CreateFlipper(129, 896);
 	flippers[1] = App->physics->CreateFlipper(220, 896, true);
@@ -157,13 +171,13 @@ bool ModuleSceneIntro::Start()
 	CreateWheel(520, 147);
 
 
-	//joints
+	//launcher joint
 	b2MouseJointDef def;
 	def.bodyA = App->physics->ground;
-	def.bodyB = spring_phys->body;
-	def.target = { PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) };
-	def.dampingRatio = 3.0f;
-	def.maxForce = 1000.0f * spring_phys->body->GetMass();
+	def.bodyB = launcher_phys->body;
+	def.target = { PIXEL_TO_METERS(449), PIXEL_TO_METERS(935) };
+	def.dampingRatio = 1.0f;
+	def.maxForce = 10000.0f * launcher_phys->body->GetMass();
 	mouse_joint = (b2MouseJoint*)App->physics->world->CreateJoint(&def);
 
 	return ret;
@@ -191,19 +205,20 @@ update_status ModuleSceneIntro::Update()
 	}
 	if (state == RESTART)
 	{
+		App->audio->PlayFx(fx[FX_START]);
 		//restart balls
-		ball_phys->body->SetTransform(START_POSITION, ball_phys->GetRotation());
-		extra_balls[0]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[0]->GetRotation());
+		ball_phys->body->SetTransform(START_POSITION, ball_phys->body->GetAngle());
+		extra_balls[0]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[0]->body->GetAngle());
 		extra_balls[0]->body->SetLinearVelocity({ 0.0f,0.0f });
-		extra_balls[1]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[1]->GetRotation());
+		extra_balls[1]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[1]->body->GetAngle());
 		extra_balls[1]->body->SetLinearVelocity({ 0.0f,0.0f });
-		extra_balls[2]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[2]->GetRotation());
+		extra_balls[2]->body->SetTransform({ PIXEL_TO_METERS(193), PIXEL_TO_METERS(156) }, extra_balls[2]->body->GetAngle());
 		extra_balls[2]->body->SetLinearVelocity({ 0.0f,0.0f });
-		extra_balls[3]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[3]->GetRotation());
+		extra_balls[3]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[3]->body->GetAngle());
 		extra_balls[3]->body->SetLinearVelocity({ 0.0f,0.0f });
-		extra_balls[4]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[4]->GetRotation());
+		extra_balls[4]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[4]->body->GetAngle());
 		extra_balls[4]->body->SetLinearVelocity({ 0.0f,0.0f });
-		extra_balls[5]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[5]->GetRotation());
+		extra_balls[5]->body->SetTransform({ PIXEL_TO_METERS(580), PIXEL_TO_METERS(240) }, extra_balls[5]->body->GetAngle());
 		extra_balls[5]->body->SetLinearVelocity({ 0.0f,0.0f });
 
 		tilts = 3;
@@ -291,7 +306,7 @@ void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h)
 
 void ModuleSceneIntro::LoseLife()
 {
-	lives--;
+	if(lives>=0) lives--;
 	if (lives == 0)
 	{
 		GameOver();
@@ -379,7 +394,7 @@ void ModuleSceneIntro::CreateWheel(int x, int y)
 	Wheel* w = new Wheel();
 	w->phys = body;
 	w->phys->type = WHEEL;
-	PhysBody* pivot = App->physics->CreateCircle(x + 76, y + 76, 5, true);
+	PhysBody* pivot = App->physics->CreateCircle(x + 76, y + 76, 5, true, -2);
 
 	b2RevoluteJointDef jointDef;
 	jointDef.bodyA = body->body;
@@ -436,6 +451,9 @@ void ModuleSceneIntro::BlitScene()
 		App->renderer->Blit(flipper, x, y, NULL, 1.0F, flippers[i]->GetRotation(), (i%2 == 0)? false:true);
 	}
 
+	launcher_phys->GetPosition(x, y);
+	App->renderer->Blit(launcher, x, y);
+
 	//Draw background
 	for (int i = 0; i < 18; i++)
 	{
@@ -450,8 +468,7 @@ void ModuleSceneIntro::BlitScene()
 
 	ball_phys->GetPosition(x, y);
 	App->renderer->Blit(ball, x, y, NULL, 1.0F, ball_phys->GetRotation());
-	spring_phys->GetPosition(x, y);
-	App->renderer->Blit(spring, x, y);
+
 
 	if(state == GAME_OVER) App->renderer->Blit(game_over_text, 0, 0);
 	else if(state == START_MENU) App->renderer->Blit(start_menu, 0, 0);
@@ -463,15 +480,17 @@ void ModuleSceneIntro::ManageInputs()
 	{
 		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 		{
-			mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(900) });
+			mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(950) });
 			mouse_joint->SetFrequency(1.0f);
 		}
 		else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 		{
-			mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(800) });
-			mouse_joint->SetFrequency(20.0f);
+			App->audio->PlayFx(fx[FX_LAUNCHER]);
+			mouse_joint->SetTarget({ PIXEL_TO_METERS(449), PIXEL_TO_METERS(935) });
+			mouse_joint->SetFrequency(150.0f);
 		}
 
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) App->audio->PlayFx(fx[FX_FLIPPER]);
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		{
 			flippers[1]->body->ApplyTorque(10000.0f, true);
@@ -500,7 +519,11 @@ void ModuleSceneIntro::ManageInputs()
 			state = RESTART;
 			lives = 3;
 		}
-		else state = PLAYING;
+		else
+		{
+			App->audio->PlayFx(fx[FX_START]);
+			state = PLAYING;
+		}
 	}
 
 	if (state == GAME_OVER)
@@ -515,6 +538,7 @@ void ModuleSceneIntro::ManageInputs()
 
 void ModuleSceneIntro::GameOver()
 {
+	App->audio->PlayFx(fx[FX_GAME_OVER]);
 	state = GAME_OVER;
 	App->score->Finished();
 }

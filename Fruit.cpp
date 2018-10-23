@@ -1,7 +1,8 @@
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModulePhysics.h"
-#include "ModuleScore.h"
+#include "ModuleAudio.h"
+#include "ModuleSceneIntro.h"
 #include "Fruit.h"
 
 
@@ -37,6 +38,7 @@ void Fruit::Restart()
 void Fruit::Hit(b2Contact* contact, PhysBody* bodyA)
 {
 	collected = true;
+	App->audio->PlayFx(App->scene_intro->fx[FX_FRUIT]);
 	phys->body->SetLinearVelocity({ 0.0f, PIXEL_TO_METERS(-50.0f) });
 }
 

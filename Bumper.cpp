@@ -1,5 +1,8 @@
+#include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
+#include "ModuleAudio.h"
+#include "ModuleSceneIntro.h"
 #include "Bumper.h"
 
 
@@ -37,6 +40,7 @@ void Bumper::Hit(b2Contact* contact, PhysBody* bodyA)
 
 	float normalLength = 0.1f;
 	bodyA->body->ApplyForce(normalLength * 1000 * worldManifold.normal, worldManifold.points[0], false);
+	App->audio->PlayFx(App->scene_intro->fx[FX_BUMPER]);
 }
 
 Bumper::Bumper()
@@ -45,5 +49,6 @@ Bumper::Bumper()
 	sprites[0] = { 0,0,41,41 };
 	sprites[1] = { 41,0,41,41 };
 	current_sprite = &sprites[0];
+	score = 100;
 }
 

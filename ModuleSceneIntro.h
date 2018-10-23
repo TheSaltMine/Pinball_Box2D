@@ -8,7 +8,7 @@
 class PhysBody;
 class b2MouseJoint;
 
-#define START_POSITION { PIXEL_TO_METERS(449), PIXEL_TO_METERS(625) }
+#define START_POSITION { PIXEL_TO_METERS(449), PIXEL_TO_METERS(850) }
 
 enum GameState
 {
@@ -18,10 +18,24 @@ enum GameState
 	START_MENU
 };
 
+enum FX 
+{
+	FX_BIGBUMPER,
+	FX_BONUS,
+	FX_BUMPER,
+	FX_FLIPPER,
+	FX_FRUIT,
+	FX_GAME_OVER,
+	FX_LAUNCHER,
+	FX_MUSHROOM,
+	FX_START,
+	FX_STONE_BLOCK
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
-	ModuleSceneIntro(Application* app, bool start_enabled = true);
+	ModuleSceneIntro(bool start_enabled = true);
 	~ModuleSceneIntro();
 
 	bool Start();
@@ -43,7 +57,7 @@ public:
 public:
 	PhysBody* ball_phys;
 	PhysBody* background_phys[18];
-	PhysBody* spring_phys;
+	PhysBody* launcher_phys;
 	PhysBody* flippers[5];
 	PhysBody* wheel_phys;
 	PhysBody* extra_balls[6];
@@ -55,7 +69,7 @@ public:
 
 	SDL_Texture* ball;
 	SDL_Texture* background;
-	SDL_Texture* spring;
+	SDL_Texture* launcher;
 	SDL_Texture* flipper;
 	SDL_Texture* stone_block;
 	SDL_Texture* background_image;
@@ -69,5 +83,7 @@ public:
 
 	int lives = 3;
 	int tilts = 3;
+	unsigned int fx[10];
+	char* music_path = "pinball/music/music.ogg";
 	GameState state = START_MENU;
 };

@@ -12,11 +12,11 @@
 #pragma comment( lib, "Box2D/libx86/Rrelease/Box2D.lib" )
 #endif
 
-ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModulePhysics::ModulePhysics(bool start_enabled) : Module(start_enabled)
 {
 	world = NULL;
 	mouse_joint = NULL;
-	debug = true;
+	debug = false;
 }
 
 // Destructor
@@ -57,7 +57,7 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body, int filterindex)
 {
 	b2BodyDef body;
 	static_body ? body.type = b2_staticBody : body.type = b2_dynamicBody;
@@ -71,6 +71,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool static_body
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
 	fixture.restitution = 0.2f;
+	fixture.filter.groupIndex = filterindex;
 
 	b->CreateFixture(&fixture);
 
