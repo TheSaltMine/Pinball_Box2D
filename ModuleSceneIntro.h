@@ -15,7 +15,8 @@ enum GameState
 	PLAYING,
 	RESTART,
 	GAME_OVER,
-	START_MENU
+	START_MENU,
+	BONUSES
 };
 
 enum FX 
@@ -57,11 +58,11 @@ public:
 	void CreateBumper(int x, int y, int radius);
 	void CreateMushroom(int x, int y, int radius,int rotation, int group);
 	void CreateWheel(int x, int y);
-	void chackBonus(Interactable* object);
-	void Bonus();
+	Groups chackBonus(Interactable* object, Groups g);
 	void LoseLife();
 	void BlitScene();
 	void ManageInputs();
+	Groups DataBonus(Groups g);
 	void GameOver();
 
 public:
@@ -97,6 +98,8 @@ public:
 	int tilts = 3;
 	Groups G1 = ON;
 	Groups G2 = ON;
+	Groups G3 = ON;
+	Groups G4 = ON;
 	float timer = 0;
 	unsigned int fx[10];
 	char* music_path = "pinball/music/music.ogg";

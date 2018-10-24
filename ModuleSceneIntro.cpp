@@ -45,8 +45,8 @@ bool ModuleSceneIntro::Start()
 	extra_ball = App->textures->Load("pinball/textures/extra_ball.png");
 	game_over_text = App->textures->Load("pinball/textures/game_over.png");
 	start_menu = App->textures->Load("pinball/textures/start_menu.png");
-	mushroom = App->textures->Load("pinball/mushroom.png");
-	bonus = App->textures->Load("pinball/bonus.png");
+	mushroom = App->textures->Load("pinball/textures/mushroom.png");
+	bonus = App->textures->Load("pinball/textures/bonus.png");
 
 	//load audio
 	fx[FX_BIGBUMPER] = App->audio->LoadFx("pinball/fx/fx_bigbumper.wav");
@@ -177,9 +177,21 @@ bool ModuleSceneIntro::Start()
 	CreateWheel(125, 74);
 	CreateWheel(520, 147);
 
-	CreateMushroom(216, 700, 8,45 , 1);
-	CreateMushroom(266, 700, 8, 90, 1);
+	CreateMushroom(360, 650, 8, 89, 1);
+	CreateMushroom(377, 665, 8, 89, 1);
+	CreateMushroom(394, 680, 8, 89, 1);
 
+	CreateMushroom(267, 445, 8, 10, 2);
+	CreateMushroom(227, 445, 8, 10, 2);
+	CreateMushroom(187, 445, 8, 10, 2);
+
+	CreateMushroom(37, 625, 8, 25, 3);
+	CreateMushroom(20, 645, 8, 25, 3);
+
+	CreateMushroom(825, 338, 8, 40, 4);
+	CreateMushroom(826, 390, 8, 40, 4);
+	CreateMushroom(827, 450, 8, 40, 4);
+	CreateMushroom(828, 510, 8, 40, 4);
 
 	//launcher joint
 	b2MouseJointDef def;
@@ -211,33 +223,29 @@ update_status ModuleSceneIntro::Update()
 		if (!interactable->data->active && interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(false);
 		else if (interactable->data->active && !interactable->data->phys->body->IsActive()) interactable->data->phys->body->SetActive(true);
 		if (state == RESTART) interactable->data->Restart();
-		chackBonus(interactable->data);
+		if (interactable->data->group == 1)
+		{
+			G1 = chackBonus(interactable->data, G1);
+		}
+		else if (interactable->data->group == 2)
+		{
+			G2 = chackBonus(interactable->data, G2);
+		}
+		else if (interactable->data->group == 3)
+		{
+			G3 = chackBonus(interactable->data, G3);
+		}
+		else if (interactable->data->group == 4)
+		{
+			G4 = chackBonus(interactable->data, G4);
+		}
 		interactable = interactable->next;
 	}
 
-	if (G1 == ON)
-	{
-		Bonus();
-		G1 = BONUS;
-	}
-	else 
-	{
-		
-		if (G1 == BONUS)
-		{
-			if (timer > 20) 
-			{
-				G1 = ON;
-				timer = 0;
-			}
-			timer++;
-		}
-		else
-		{
-			G1 = ON;
-		}
-	}
-
+	G1 = DataBonus(G1);
+	G2 = DataBonus(G2);
+	G3 = DataBonus(G3);
+	G4 = DataBonus(G4);
 
 	if (state == RESTART)
 	{
@@ -471,25 +479,20 @@ void ModuleSceneIntro::CreateWheel(int x, int y)
 	interactables.add(w);
 }
 
-void ModuleSceneIntro::chackBonus(Interactable* object)
+Groups ModuleSceneIntro::chackBonus(Interactable* object, Groups g)
 {
-	if (object->group == 1)
-	{
-		if (G1 == BONUS && timer > 20)
+		if (g == BONUS && timer > 20)
 		{
 			object->Restart();
 		}
-		else if (object->active == true)
+		if (object->active == true && g != BONUS)
 		{
-			G1 = OFF;
+			return g = OFF;
 		}
-	}
-}
-
-void ModuleSceneIntro::Bonus()
-{
-	App->score->IncreaseScore(5000);
-	App->renderer->Blit(bonus, 0, 0);
+		else
+		{
+			return g;
+		}
 }
 
 void ModuleSceneIntro::BlitScene()
@@ -552,6 +555,7 @@ void ModuleSceneIntro::BlitScene()
 
 	if(state == GAME_OVER) App->renderer->Blit(game_over_text, 0, 0);
 	else if(state == START_MENU) App->renderer->Blit(start_menu, 0, 0);
+	if(state == BONUSES)App->renderer->Blit(bonus, 0, 0);
 }
 
 void ModuleSceneIntro::ManageInputs()
@@ -613,6 +617,34 @@ void ModuleSceneIntro::ManageInputs()
 			lives = 3;
 		}
 		else if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) state = START_MENU;
+	}
+}
+
+Groups ModuleSceneIntro::DataBonus(Groups g)
+{
+	if (g == ON)
+	{
+		state = BONUSES;
+		return g = BONUS;
+	}
+	else
+	{
+
+		if (g == BONUS)
+		{
+			if (timer > 20)
+			{
+				App->score->IncreaseScore(5000);
+				timer = 0;
+				state = PLAYING;
+				return g = ON;
+			}
+			timer++;
+		}
+		else
+		{
+			return g = ON;
+		}
 	}
 }
 
