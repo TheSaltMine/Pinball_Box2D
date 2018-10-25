@@ -557,12 +557,7 @@ void ModuleSceneIntro::BlitScene()
 	launcher_phys->GetPosition(x, y);
 	App->renderer->Blit(launcher, x, y);
 
-	//Draw background
-	for (int i = 0; i < 18; i++)
-	{
-		background_phys[i]->GetPosition(x, y);
-		App->renderer->Blit(background, x, y);
-	}
+	App->renderer->Blit(background, 0, 0);
 	for (int i = 0; i < 6; i++)
 	{
 		extra_balls[i]->GetPosition(x, y);
