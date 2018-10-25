@@ -95,7 +95,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = 25.0f;
+	fixture.density = 1.0f;
 	fixture.filter.groupIndex = -4;
 
 	b->CreateFixture(&fixture);

@@ -23,7 +23,7 @@ Axel Alavedra Cabello
 
 
 ## Repository
-Acces de repository of the project [here](https://github.com/TheSaltMine/Pinball_Box2D)
+Acces the repository of the project [here](https://github.com/TheSaltMine/Pinball_Box2D)
 
 ## Differences
 - Carnivorous plant not implemented.

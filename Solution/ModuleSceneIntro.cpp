@@ -328,7 +328,7 @@ void ModuleSceneIntro::CreateBumper(int x, int y, int radius)
 	PhysBody* body;
 	body = App->physics->CreateCircle(x, y, radius, b2_kinematicBody);
 	b2Fixture* f = body->body->GetFixtureList();
-	f->SetRestitution(2.0f);
+	f->SetRestitution(1.5f);
 	body->type = BUMPER;
 	Bumper* bumper = new Bumper();
 	bumper->phys = body;
@@ -341,7 +341,7 @@ void ModuleSceneIntro::CreateMushroom(int x, int y, int radius, int rotation, in
 	PhysBody* body;
 	body = App->physics->CreateCircle(x, y, radius, b2_kinematicBody);
 	b2Fixture* f = body->body->GetFixtureList();
-	f->SetRestitution(2.0f);
+	f->SetRestitution(1.5f);
 	body->type = MUSHROOM;
 	Mushroom* mushroom = new Mushroom();
 	mushroom->phys = body;
@@ -377,7 +377,7 @@ void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h, bool flip_, 
 		body = App->physics->CreateChain(x, y, bigbumpercoord, 10, true);
 	}
 	b2Fixture* f = body->body->GetFixtureList();
-	f->SetRestitution(3.0f);
+	f->SetRestitution(1.5f);
 	body->type = BIGBUMPER;
 	BigBumper* bigbumper = new BigBumper();
 	bigbumper->phys = body;
@@ -598,14 +598,14 @@ void ModuleSceneIntro::ManageInputs()
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) App->audio->PlayFx(fx[FX_FLIPPER]);
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		{
-			flippers[1]->body->ApplyTorque(10000.0f, true);
-			flippers[3]->body->ApplyTorque(10000.0f, true);
+			flippers[1]->body->ApplyTorque(1250.0f, true);
+			flippers[3]->body->ApplyTorque(1250.0f, true);
 		}
 		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 		{
-			flippers[0]->body->ApplyTorque(-10000.0f, true);
-			flippers[2]->body->ApplyTorque(-10000.0f, true);
-			flippers[4]->body->ApplyTorque(-10000.0f, true);
+			flippers[0]->body->ApplyTorque(-1250.0f, true);
+			flippers[2]->body->ApplyTorque(-1250.0f, true);
+			flippers[4]->body->ApplyTorque(-1250.0f, true);
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)

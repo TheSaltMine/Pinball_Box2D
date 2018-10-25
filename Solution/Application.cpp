@@ -5,7 +5,6 @@
 #include "ModuleTextures.h"
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
-#include "ModulePlayer.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleScore.h"
@@ -19,7 +18,6 @@ Application::Application()
 	textures = new ModuleTextures(true);
 	input = new ModuleInput(true);
 	audio = new ModuleAudio(true);
-	player = new ModulePlayer(true);
 	scene_intro = new ModuleSceneIntro(true);
 	physics = new ModulePhysics(true);
 	score = new ModuleScore(true);
@@ -41,8 +39,6 @@ Application::Application()
 	AddModule(scene_intro);
 	AddModule(score);
 
-	// Player
-	AddModule(player);
 }
 
 Application::~Application()
