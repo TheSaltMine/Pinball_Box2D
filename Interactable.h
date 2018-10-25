@@ -11,6 +11,7 @@ public:
 	virtual void Restart() {};
 	virtual SDL_Rect* GetSprite() { return nullptr; };
 
+	bool flip;
 	bool active = true;
 	SDL_Rect* sprites;
 	PhysBody* phys = nullptr;
