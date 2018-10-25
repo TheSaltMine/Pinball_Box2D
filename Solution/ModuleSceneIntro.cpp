@@ -120,10 +120,10 @@ bool ModuleSceneIntro::Start()
 	death_triggers[1] = App->physics->CreateRectangleSensor(690, 1000, 229, 35, b2_staticBody);
 	death_triggers[1]->type = DEATH;
 
-	CreateBigbumpers(70, 720, 41, 123, true);
-	CreateBigbumpers(320, 720, 41, 123, false);
-	CreateBigbumpers(540, 720, 41, 123, true);
-	CreateBigbumpers(800, 720, 41, 123, false);
+	CreateBigbumpers(70, 720, 41, 123, true, 71, 770, 3, 104);
+	CreateBigbumpers(320, 720, 41, 123, false, 360, 770, 3, 104);
+	CreateBigbumpers(540, 720, 41, 123, true, 541, 770, 3, 104);
+	CreateBigbumpers(800, 720, 41, 123, false, 840, 770, 3, 104);
 
 	//create stoneblocks
 	CreateStoneBlock(40, 505, 80, 21);
@@ -352,7 +352,7 @@ void ModuleSceneIntro::CreateMushroom(int x, int y, int radius, int rotation, in
 	interactables.add(mushroom);
 }
 
-void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h, bool flip_)
+void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h, bool flip_, int x2, int y2, int w2, int h2)
 {
 	PhysBody* body;
 	if (flip_) {
@@ -377,12 +377,18 @@ void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h, bool flip_)
 		body = App->physics->CreateChain(x, y, bigbumpercoord, 10, true);
 	}
 	b2Fixture* f = body->body->GetFixtureList();
-	f->SetRestitution(4.0f);
+	f->SetRestitution(3.0f);
 	body->type = BIGBUMPER;
 	BigBumper* bigbumper = new BigBumper();
 	bigbumper->phys = body;
 	bigbumper->flip = flip_;
+	PhysBody* body2;
+	body2 = App->physics->CreateRectangle(x2, y2, w2, h2, b2_staticBody);
+	body2->type = BACKGROUND;
+	bigbumper->phys2 = body2;
 	interactables.add(bigbumper);
+	
+
 }
 
 void ModuleSceneIntro::LoseLife()
