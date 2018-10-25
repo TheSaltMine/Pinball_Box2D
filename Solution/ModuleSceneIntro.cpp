@@ -650,6 +650,7 @@ Groups ModuleSceneIntro::DataBonus(Groups g)
 			if (timer > 20)
 			{
 				App->score->IncreaseScore(5000);
+				App->audio->PlayFx(fx[FX_BONUS]);
 				timer = 0;
 				state = PLAYING;
 				return g = ON;
