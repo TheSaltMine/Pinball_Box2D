@@ -71,12 +71,12 @@ update_status ModuleScore::Update()
 			}
 			if (prev_digit_score[i] != -1)
 			{
-				App->renderer->Blit(extra_font, prev_x, prev_y, &extra_number_rects[digit_score[i]]);
+				App->renderer->Blit(extra_font, prev_x, prev_y, &extra_number_rects[prev_digit_score[i]]);
 				prev_x -= 14;
 			}
 			if (high_digit_score[i] != -1)
 			{
-				App->renderer->Blit(extra_font, high_x, high_y, &extra_number_rects[digit_score[i]]);
+				App->renderer->Blit(extra_font, high_x, high_y, &extra_number_rects[high_digit_score[i]]);
 				high_x -= 14;
 			}
 		}

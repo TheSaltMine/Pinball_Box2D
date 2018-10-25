@@ -43,4 +43,5 @@ Mushroom::Mushroom()
 	sprites[0] = {0,0,20,19};
 	sprites[1] = { 20,0,20,19 };
 	current_sprite = &sprites[0];
+	score = 100;
 }
