@@ -120,7 +120,10 @@ bool ModuleSceneIntro::Start()
 	death_triggers[1] = App->physics->CreateRectangleSensor(690, 980, 229, 35, b2_staticBody);
 	death_triggers[1]->type = DEATH;
 
-	CreateBigbumpers(70, 720, 41, 123);
+	CreateBigbumpers(70, 720, 41, 123, true);
+	CreateBigbumpers(320, 720, 41, 123, false);
+	CreateBigbumpers(540, 720, 41, 123, true);
+	CreateBigbumpers(800, 720, 41, 123, false);
 
 	//create stoneblocks
 	CreateStoneBlock(40, 505, 80, 21);
@@ -349,22 +352,36 @@ void ModuleSceneIntro::CreateMushroom(int x, int y, int radius, int rotation, in
 	interactables.add(mushroom);
 }
 
-void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h)
+void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h, bool flip_)
 {
 	PhysBody* body;
-	int bigbumpercoord[10] = {
-		9, 1,
-		41, 101,
-		22, 121,
-		1, 102,
-		2, 0
-	};
-	body = App->physics->CreateChain(x,y, bigbumpercoord, 10, true);
+	if (flip_) {
+		int bigbumpercoord[10] = {
+			9, 1,
+			41, 101,
+			22, 121,
+			1, 102,
+			2, 0
+		};
+		body = App->physics->CreateChain(x, y, bigbumpercoord, 10, true);
+	}
+	else
+	{
+		int bigbumpercoord[10] = {
+			39, 0,
+			38, 102,
+			20, 123,
+			1, 103,
+			21, 8
+		};
+		body = App->physics->CreateChain(x, y, bigbumpercoord, 10, true);
+	}
 	b2Fixture* f = body->body->GetFixtureList();
 	f->SetRestitution(4.0f);
 	body->type = BIGBUMPER;
 	BigBumper* bigbumper = new BigBumper();
 	bigbumper->phys = body;
+	bigbumper->flip = flip_;
 	interactables.add(bigbumper);
 }
 
@@ -519,7 +536,10 @@ void ModuleSceneIntro::BlitScene()
 			App->renderer->Blit(wheel, x, y, NULL, 1.0f, interactable->data->phys->GetRotation(), false, false, PIXEL_TO_METERS(76), PIXEL_TO_METERS(76));
 			break;
 		case BIGBUMPER:
+			if(interactable->data->flip)
 			App->renderer->Blit(bigbumper, x, y, interactable->data->GetSprite());
+			else
+			App->renderer->Blit(bigbumper, x, y, interactable->data->GetSprite(),0,0,true);
 			break;
 		case MUSHROOM:
 			App->renderer->Blit(mushroom, x, y, interactable->data->GetSprite(),0, interactable->data->phys->GetRotation());
