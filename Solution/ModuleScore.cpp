@@ -134,4 +134,12 @@ void ModuleScore::Finished()
 		prev_digit_score[index] = digit;
 		index--;
 	}
+
+	score = 0;
+	digit_score[0] = -1;
+	digit_score[1] = -1;
+	digit_score[2] = -1;
+	digit_score[3] = -1;
+	digit_score[4] = -1;
+	digit_score[5] = 0;
 }

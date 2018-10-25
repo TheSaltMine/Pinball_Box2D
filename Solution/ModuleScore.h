@@ -16,7 +16,7 @@ public:
 	SDL_Rect number_rects[10];
 	SDL_Rect extra_number_rects[10];
 	SDL_Rect lives_rects[4];
-	int score;
+	int score = 0;
 	int digit_score[MAX_DIGITS] = {-1,-1,-1,-1,-1,0};
 	int previous_score;
 	int prev_digit_score[MAX_DIGITS] = { -1,-1,-1,-1,-1,0 };

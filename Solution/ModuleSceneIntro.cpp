@@ -115,9 +115,9 @@ bool ModuleSceneIntro::Start()
 	extra_balls[5]->listener = this;
 	extra_balls[5]->type = EXTRA_BALL;
 
-	death_triggers[0] = App->physics->CreateRectangleSensor(210, 980, 229, 35, b2_staticBody);
+	death_triggers[0] = App->physics->CreateRectangleSensor(210, 1000, 229, 35, b2_staticBody);
 	death_triggers[0]->type = DEATH;
-	death_triggers[1] = App->physics->CreateRectangleSensor(690, 980, 229, 35, b2_staticBody);
+	death_triggers[1] = App->physics->CreateRectangleSensor(690, 1000, 229, 35, b2_staticBody);
 	death_triggers[1]->type = DEATH;
 
 	CreateBigbumpers(70, 720, 41, 123, true);
@@ -387,7 +387,7 @@ void ModuleSceneIntro::CreateBigbumpers(int x, int y, int w, int h, bool flip_)
 
 void ModuleSceneIntro::LoseLife()
 {
-	if(lives>=0) lives--;
+	if(lives >= 0) lives--;
 	if (lives == 0)
 	{
 		GameOver();
@@ -616,6 +616,7 @@ void ModuleSceneIntro::ManageInputs()
 	{
 		if (lives == 0) {
 			state = RESTART;
+			App->score->Finished();
 			lives = 3;
 		}
 		else
@@ -629,6 +630,7 @@ void ModuleSceneIntro::ManageInputs()
 	{
 		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
 			state = RESTART;
+			App->score->Finished();
 			lives = 3;
 		}
 		else if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) state = START_MENU;
@@ -667,6 +669,7 @@ Groups ModuleSceneIntro::DataBonus(Groups g)
 void ModuleSceneIntro::GameOver()
 {
 	App->audio->PlayFx(fx[FX_GAME_OVER]);
+	ball_phys->body->SetLinearVelocity({ 0.0f,0.0f });
 	state = GAME_OVER;
-	App->score->Finished();
+	
 }
